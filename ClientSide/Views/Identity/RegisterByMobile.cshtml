@@ -1,0 +1,81 @@
+﻿@using ServiceLayer.ViewModels.IdentityViewModels
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "RegisterByMobile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+
+}
+<style>
+    .parent {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+    }
+
+    .div1 {
+        grid-area: 2 / 1 / 5 / 6;
+    }
+</style>
+
+<section>
+
+    <div class="parent">
+        <div class="div1">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-5">
+                        <div class="login-container bg-white rounded-3 p-4 p-md-5">
+                            <div class="login-header text-center mb-4">
+                                <h1 class="h3 mb-2">ورود به حساب کاربری</h1>
+                                <p class="text-muted">لطفا اطلاعات خود را وارد نمایید</p>
+                            </div>
+
+                            <form>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">نام کاربری یا ایمیل</label>
+                                    <input type="text" class="form-control" id="username" placeholder="نام کاربری یا ایمیل خود را وارد کنید">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">رمز عبور</label>
+                                    <input type="password" class="form-control" id="password" placeholder="رمز عبور خود را وارد کنید">
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="remember">
+                                        <label class="form-check-label" for="remember">مرا به خاطر بسپار</label>
+                                    </div>
+                                    <div class="forgot-password">
+                                        <a href="#">رمز عبور را فراموش کرده‌ام</a>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 mb-3">ورود</button>
+
+                                <div class="signup-link text-center">
+                                    حساب کاربری ندارید؟ <a href="#">ثبت نام کنید</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+   
+  
+
+   
+
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+}

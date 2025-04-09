@@ -73,5 +73,13 @@ namespace ServiceLayer.Services
             
             return -1;
         }
+
+        public int GetUserIdByPhoneNumber(string phoneNumber)
+        {
+            var res = _db.Users.FirstOrDefault(u => u.PhoneNumber == phoneNumber);
+
+            return res.UserId;
+
+        }
     }
 }

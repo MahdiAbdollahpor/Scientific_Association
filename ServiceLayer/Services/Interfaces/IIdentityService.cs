@@ -11,5 +11,6 @@ namespace ServiceLayer.Services.Interfaces
     {
         int RegisterByPhoneNumber(RegisterViewModel model);
         int IsExistPhoneNumber(string PhoneNumber);
+        int GetUserIdByPhoneNumber(string phoneNumber);
     }
 }
