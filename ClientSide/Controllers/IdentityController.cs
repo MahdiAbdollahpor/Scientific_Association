@@ -69,5 +69,81 @@ namespace ClientSide.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [Route("Login")]
+        public IActionResult LoginByMobile()
+        {
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult LoginByMobile(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                int res = _identityService.GetUserStatusForLoginByPhoneNumber(model.studentNumber, model.Password);
+                if (res == -100)
+                {
+                    TempData["error"] = "حساب کاربری وجود ندارد";
+                    return View();
+                }
+                if (res == -50)
+                {
+                    TempData["error"] = "کاربر گرامی رمز عبور شما اشتبه است";
+                    return View(model);
+                }
+                if (res == -200)
+                {
+                    TempData["error"] = "حساب کاربری شما فعال می باشد";
+                    return View();
+                }
+                else
+                {
+                    int userId = _identityService.GetUserIdByStudentNumber(model.studentNumber);
+                    
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,userId.ToString()),
+                        new Claim(ClaimTypes.Name,_identityService.GetPhoneNumberByStudentNumber(model.studentNumber))
+                    };
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+
+                    var properties = new AuthenticationProperties
+                    {
+                        IsPersistent = model.RememberMe,
+                        AllowRefresh = true
+                    };
+                    HttpContext.SignInAsync(principal, properties);
+
+                    //if (returnUrl  != null)
+                    //{
+                    //    TempData["success"] = "ورود با موفقیت انجام شد";
+                    //    return RedirectToAction("returnUrl");
+                    //}
+
+                    TempData["success"] = "ورود با موفقیت انجام شد";
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            TempData["error"] = "کاربر گرامی متاسفانه ورود به حساب کاربری موفقیت آمیز نبود  ";
+            return View(model);
+        }
+
+        [Route("SignOut")]
+        public IActionResult SignOut()
+        {
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["info"] = "کاربر گرامی شما از حساب کاربری خود خارج شدید";
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

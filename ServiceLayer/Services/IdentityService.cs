@@ -3,11 +3,7 @@ using DataLayer.Models.Identity;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.IdentityViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ServiceLayer.Services
 {
@@ -43,7 +39,7 @@ namespace ServiceLayer.Services
                     PhoneNumber = model.PhoneNumber,
                 };
 
-               
+
 
                 _db.Users.Add(user);
                 _db.SaveChanges();
@@ -54,7 +50,7 @@ namespace ServiceLayer.Services
             {
                 return -100;
             }
-           
+
 
             return -1;
         }
@@ -70,7 +66,7 @@ namespace ServiceLayer.Services
             {
                 return 1;
             }
-            
+
             return -1;
         }
 
@@ -80,6 +76,91 @@ namespace ServiceLayer.Services
 
             return res.UserId;
 
+        }
+
+        public string GetDisplayNameByPhoneNumber(string phone)
+        {
+            return _db.Users.FirstOrDefault(x => x.PhoneNumber == phone).firstName;
+        }
+
+        //-100 => کاربر وجود ندارد
+        //-50 => پسورد اشتباه است
+        // -200 =>کاربر حذف شده است
+        public int GetUserStatusForLoginByPhoneNumber(string studentNumber, string password)
+        {
+            var user = _db.Users.FirstOrDefault(u => u.studentNumber == studentNumber);
+            if (user == null)
+            {
+                return -100;
+            }
+            if (user.Password != PasswordHelper.EncodePasswordMd5(password))
+            {
+                return -50;
+            }
+            if (user.IsDeleted == true)
+            {
+                return -200;
+            }
+
+            return -1;
+        }
+
+        public int GetUserIdByStudentNumber(string studentNumber)
+        {
+            var res = _db.Users.FirstOrDefault(u => u.studentNumber == studentNumber);
+
+            return res.UserId;
+
+        }
+        public string GetPhoneNumberByStudentNumber(string studentNumber)
+        {
+            var res = _db.Users.FirstOrDefault(u => u.studentNumber == studentNumber);
+
+            return res.PhoneNumber;
+
+        }
+
+        public bool CheckPermission(int permissionId, string phoneNumber)
+        {
+            int userId = _db.Users.FirstOrDefault(u => u.PhoneNumber == phoneNumber).UserId;
+
+            List<int> roleIds = _db.UserRoles.Where(x => x.UserId == userId).Select(x => x.RoleId).ToList();
+
+            bool flag = false;
+
+            if (!roleIds.Any())
+            {
+                flag = false;
+            }
+            else
+            {
+                foreach (int roleId in roleIds)
+                {
+                    foreach (var _rolePermission in _db.RolePermissions.Where(x => x.RoleId == roleId).ToList())
+                    {
+                        if (_rolePermission.PermissionId == permissionId)
+                        {
+                            flag = true;
+                        }
+                    }
+                }
+            }
+
+            return flag;
+        }
+
+        public UserInfoForUserPanelViewModel GetUserInfoForUserPanel(string phoneNumber)
+        {
+            return _db.Users.Where(x => x.PhoneNumber == phoneNumber).Select(x => new UserInfoForUserPanelViewModel
+            {
+                firstName = x.firstName,
+                lastName = x.lastName,
+                nationalCode = x.nationalCode,
+                studentNumber = x.studentNumber,
+                PhoneNumber = x.PhoneNumber,
+                RegisterTime = MyDateTime.GetShamsiDateFromGregorian(x.RegisterTime, false),
+                UserId = x.UserId
+            }).FirstOrDefault();
         }
     }
 }

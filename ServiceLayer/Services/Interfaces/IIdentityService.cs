@@ -12,5 +12,11 @@ namespace ServiceLayer.Services.Interfaces
         int RegisterByPhoneNumber(RegisterViewModel model);
         int IsExistPhoneNumber(string PhoneNumber);
         int GetUserIdByPhoneNumber(string phoneNumber);
+        string GetDisplayNameByPhoneNumber(string phone);
+        int GetUserStatusForLoginByPhoneNumber(string studentNumber, string password);
+        int GetUserIdByStudentNumber(string studentNumber);
+        string GetPhoneNumberByStudentNumber(string studentNumber);
+        bool CheckPermission(int permissionId, string phoneNumber);
+        UserInfoForUserPanelViewModel GetUserInfoForUserPanel(string phoneNumber);
     }
 }

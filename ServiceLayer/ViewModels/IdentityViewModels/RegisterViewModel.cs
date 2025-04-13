@@ -4,19 +4,20 @@ namespace ServiceLayer.ViewModels.IdentityViewModels
 {
     public class RegisterViewModel
     {
-        [Display(Name = "شماره همراه ")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "لطفا {0}را وارد نمایید")]
-        [StringLength(11, ErrorMessage = "{0} باید 11 کاراکتر باشد ", MinimumLength = 11)]
-        public string PhoneNumber { get; set; }
+
         [Display(Name = " نام  ")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "لطفا {0}را وارد نمایید")]
-        [StringLength(25, ErrorMessage = "  {0}   باید بین {2} کاراکتر تا {1} کاراکتر باشد    ", MinimumLength = 4)]
+        [StringLength(25, ErrorMessage = "  {0}   باید بین {2} کاراکتر تا {1} کاراکتر باشد    ", MinimumLength = 3)]
         public string firstName { get; set; }
         [Display(Name = " نام خانوادگی  ")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "لطفا {0}را وارد نمایید")]
         [StringLength(25, ErrorMessage = "  {0}   باید بین {2} کاراکتر تا {1} کاراکتر باشد    ", MinimumLength = 4)]
         public string lastName { get; set; }
-        [Display(Name = "کد ملی خود را وارد کنید ")]
+		[Display(Name = "شماره همراه ")]
+		[Required(AllowEmptyStrings = false, ErrorMessage = "لطفا {0}را وارد نمایید")]
+		[StringLength(11, ErrorMessage = "{0} باید 11 کاراکتر باشد ", MinimumLength = 11)]
+		public string PhoneNumber { get; set; }
+		[Display(Name = "کد ملی خود را وارد کنید ")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "لطفا {0}را وارد نمایید")]
         [StringLength(10, ErrorMessage = "{0} باید 10 کاراکتر باشد ", MinimumLength = 10)]
         public string nationalCode { get; set; }

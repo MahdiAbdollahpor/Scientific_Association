@@ -1,0 +1,85 @@
+﻿@using ServiceLayer.ViewModels.IdentityViewModels
+@model LoginViewModel
+@{
+    ViewData["Title"] = "LoginByMobile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .parent {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+    }
+
+    .div1 {
+        grid-area: 1 / 1 / 5 / 6;
+    }
+</style>
+
+<section>
+
+    <div class="parent">
+        <div class="div1">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-5">
+                        <div class="login-container bg-white rounded-3 p-4 p-md-5">
+                            <div class="login-header text-center mb-4">
+                                <h1 class="h3 mb-2">ایجاد حساب کاربری</h1>
+                                <p class="text-muted">لطفا اطلاعات خود را وارد نمایید</p>
+                            </div>
+
+                            <form method="post" asp-action="LoginByMobile">
+                                <div class="row">
+
+                                    <div class="mb-3 col-12">
+                                        <label asp-for="studentNumber" class="form-label">کد دانشجویی</label>
+                                        <input type="text" asp-for="studentNumber" class="form-control" id="username">
+                                        <span asp-validation-for="studentNumber " class="text-danger"></span>
+                                    </div>
+
+
+                                    <div class="mb-3 col-12">
+                                        <label asp-for="Password" class="form-label">رمز عبور</label>
+                                        <input asp-for="Password" type="Password" class="form-control" id="password">
+                                        <span asp-validation-for="Password " class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-check form-check-box">
+                                        <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="flexCheckDefault">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            مرا فراموش نکن
+                                        </label>
+                                    </div>
+
+                                  
+
+                                    <button type="submit" class="btn btn-primary w-100 py-2 mb-3">ورود</button>
+
+                                    <div class="signup-link text-center">
+                                        حساب کاربری ندارید؟ <a asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام  کنید</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+}
