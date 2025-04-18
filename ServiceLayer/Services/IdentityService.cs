@@ -162,5 +162,20 @@ namespace ServiceLayer.Services
                 UserId = x.UserId
             }).FirstOrDefault();
         }
+
+        public UserPanelSidebarViewModels GetUserPanelSidebar(string phoneNumber)
+        {
+
+            var user = _db.Users.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
+            UserPanelSidebarViewModels userPanelSidebarViewModels = new UserPanelSidebarViewModels
+            {
+                firstName = user.firstName,
+                lastName = user.lastName
+
+            };
+            return userPanelSidebarViewModels;
+
+
+        }
     }
 }

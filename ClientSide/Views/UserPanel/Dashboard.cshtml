@@ -1,0 +1,158 @@
+﻿@using ServiceLayer.ViewModels.IdentityViewModels
+@model UserInfoForUserPanelViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+
+    <body class="bg-gray-50">
+        <div class="container mx-auto p-4">
+            <div class="flex flex-wrap">
+                <!-- Sidebar (col-3) -->
+            <partial name="_UserPanelSidebar" />
+               
+
+                <!-- Main Content (col-9) -->
+                <div class="w-full md:w-3/4 lg:w-9/12 px-2">
+                    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-800">اطلاعات کاربری</h2>
+                           
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-right">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                     
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="table-row border-b border-gray-100">
+
+                                        <td class="py-3 px-4 text-gray-600">نام</td>
+                                    <td class="py-3 px-4 font-medium">@Model.firstName </td>
+                                    </tr>
+                                    <tr class="table-row border-b border-gray-100">
+
+                                        <td class="py-3 px-4 text-gray-600">نام خانوادگی</td>
+                                    <td class="py-3 px-4 font-medium">@Model.lastName</td>
+                                    </tr>
+                                    <tr class="table-row border-b border-gray-100">
+
+                                        <td class="py-3 px-4 text-gray-600">کد ملی</td>
+                                        <td class="py-3 px-4 font-medium">@Model.nationalCode</td>
+                                    </tr>
+                                    <tr class="table-row border-b border-gray-100">
+
+                                        <td class="py-3 px-4 text-gray-600">کد دانشجویی</td>
+                                        <td class="py-3 px-4 font-medium">@Model.studentNumber</td>
+                                    </tr>
+                                    <tr class="table-row border-b border-gray-100">
+
+                                        <td class="py-3 px-4 text-gray-600">شماره تماس</td>
+                                        <td class="py-3 px-4 font-medium">@Model.PhoneNumber</td>
+                                    </tr>
+                                    <tr class="table-row border-b border-gray-100">
+                                        <td class="py-3 px-4 text-gray-600">تاریخ ثبت نام </td>
+                                    <td class="py-3 px-4 font-medium">@Model.RegisterTime</td>
+                                    </tr>
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-6 flex flex-wrap justify-between items-center">
+                           
+
+                            <div class="flex space-x-2 space-x-reverse">
+                                <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center">
+                                    <i class="fas fa-download ml-2"></i>
+                                    <span>تغییر رمز عبور</span>
+                                </button>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+    </body>
+
+
+
+
+
+
+
+
+
+
+  @*   <div class="content">
+        <div class="dashboard">
+            <div class="container-fluid">
+                <div class="row">
+                    <partial name="_UserPanelSidebar" />
+                    <div class="col-lg-9">
+                        <div class="content-box" style="padding:40px 20px;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="ui-boxs">
+                                        <div class="ui-box">
+                                            <div class="ui-box-item ui-box-white">
+                                                <div class="ui-box-item-title">
+                                                    <div class="row d-flex justify-content-between align-items-center">
+                                                        <h4 class="col-9 fw-bold">
+                                                            اطلاعات شخصی
+                                                        </h4>
+                                                        
+
+                                                        <button id="edit-op" class="col-3 btn2">ویرایش</button>
+
+                                                    </div>
+                                                </div>
+                                                <div class="ui-box-item-desc p-0">
+                                                    <table class="table main-table shadow-none main-table-2">
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <h6 class="text-muted">نام و نام خانوادگی</h6>
+                                                                <p class="fw-bold mt-2">@Model.firstName @Model.lastName</p>
+                                                            </td>
+                                                            <td colspan="2">
+                                                                <h6 class="text-muted">شماره تلفن</h6>
+                                                                <p class="fw-bold mt-2">@Model.PhoneNumber</p>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <h6>عضویت</h6>
+                                                                <p class="fw-bold mt-2">@Model.RegisterTime </p>
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                        
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end dashboard -->
+    </div> *@
+
+
+

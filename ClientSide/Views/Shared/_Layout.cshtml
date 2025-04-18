@@ -11,11 +11,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ClientSide.styles.css" asp-append-version="true" />
 
-    <!--sweet alert-->
-    <link href="~/lib/swal/swal.css" rel="stylesheet" />
-
     <!-- Bootstrap RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body style="background-color: #f8f9fb;">
 
@@ -26,67 +24,104 @@
         <input id="message4" type="hidden" value="@TempData["warning"]" />
     </div>
 
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ClientSide</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
 
+    <header>
+        <nav class="navbar bg-white border-b border-gray-200 mb-3 py-3">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center">
+                    
+
+                    <button class="md:hidden block text-gray-600 focus:outline-none" id="mobile-menu-button">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+
+                    <div class="hidden md:flex items-center space-x-6 space-x-reverse" id="navbar-menu">
+                        <ul class="flex space-x-6 space-x-reverse items-center">
+                            <li class="nav-item">
+                                <a class="nav-link text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Home" asp-action="Index">خانه</a>
+                            </li>
+
+                             @if (!User.Identity.IsAuthenticated)
+                            {
+                                <li class="signin-btn">
+                                    <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام</a>
+                                </li>
+                                <li class="signin-btn">
+                                    <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="LoginByMobile">ورود</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="signin-btn">
+                                    <a class="flex items-center text-blue-500 font-medium" asp-controller="UserPanel" asp-action="Dashboard">
+                                        <i class="fas fa-user-circle ml-2"></i>
+                                        <span>@_identityService.GetDisplayNameByPhoneNumber(User.Identity.Name)</span>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Mobile menu -->
+                <div class="md:hidden hidden mt-4" id="mobile-menu">
+                    <ul class="space-y-3">
+                        <li>
+                            <a class="block text-gray-700 hover:text-blue-500 py-2" asp-area="" asp-controller="Home" asp-action="Index">خانه</a>
+                        </li>
                         @if (!User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item signin-btn">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام </a>   
-
+                            <li class="signin-btn">
+                                <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام</a>
                             </li>
-
-                            <li class="nav-item signin-btn">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="LoginByMobile">ورود </a>
-
+                            <li class="signin-btn">
+                                <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="LoginByMobile">ورود</a>
                             </li>
-
                         }
                         else
                         {
-                            <li class="nav-item signin-btn">
-                                <a asp-controller="UserPanel" asp-action="Dashboard" class="nav-link">
-                                    <i class="la la-sign-in"></i>
+                            <li class="signin-btn">
+                                <a class="flex items-center text-blue-500 font-medium py-2" asp-controller="UserPanel" asp-action="Dashboard">
+                                    <i class="fas fa-user-circle ml-2"></i>
                                     <span>@_identityService.GetDisplayNameByPhoneNumber(User.Identity.Name)</span>
                                 </a>
-
                             </li>
                         }
-
-                       
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div  class="container mt-5">
-        <main role="main" class="pb-3">
+
+    <div class="container mx-auto px-4 mt-5">
+        <main class="pb-3">
+            <!-- Content will be rendered here -->
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - ClientSide - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-t border-gray-200 py-4 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-600 mb-4 md:mb-0">
+                    &copy; 2025 - ClientSide
+                </div>
+                <div>
+                    <a href="#" class="text-gray-600 hover:text-blue-500">حریم خصوصی</a>
+                </div>
+            </div>
         </div>
     </footer>
+
+ 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

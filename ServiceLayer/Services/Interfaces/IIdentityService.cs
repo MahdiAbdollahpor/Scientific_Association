@@ -18,5 +18,6 @@ namespace ServiceLayer.Services.Interfaces
         string GetPhoneNumberByStudentNumber(string studentNumber);
         bool CheckPermission(int permissionId, string phoneNumber);
         UserInfoForUserPanelViewModel GetUserInfoForUserPanel(string phoneNumber);
+        UserPanelSidebarViewModels GetUserPanelSidebar(string phoneNumber);
     }
 }
