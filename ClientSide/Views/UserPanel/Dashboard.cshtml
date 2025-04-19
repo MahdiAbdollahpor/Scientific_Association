@@ -72,8 +72,11 @@
 
                             <div class="flex space-x-2 space-x-reverse">
                                 <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center">
+
+                                <a asp-area="" asp-controller="UserPanel" asp-action="NewPassword" >
                                     <i class="fas fa-download ml-2"></i>
                                     <span>تغییر رمز عبور</span>
+                                </a>
                                 </button>
                                 
                             </div>
@@ -85,74 +88,3 @@
 
       
     </body>
-
-
-
-
-
-
-
-
-
-
-  @*   <div class="content">
-        <div class="dashboard">
-            <div class="container-fluid">
-                <div class="row">
-                    <partial name="_UserPanelSidebar" />
-                    <div class="col-lg-9">
-                        <div class="content-box" style="padding:40px 20px;">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="ui-boxs">
-                                        <div class="ui-box">
-                                            <div class="ui-box-item ui-box-white">
-                                                <div class="ui-box-item-title">
-                                                    <div class="row d-flex justify-content-between align-items-center">
-                                                        <h4 class="col-9 fw-bold">
-                                                            اطلاعات شخصی
-                                                        </h4>
-                                                        
-
-                                                        <button id="edit-op" class="col-3 btn2">ویرایش</button>
-
-                                                    </div>
-                                                </div>
-                                                <div class="ui-box-item-desc p-0">
-                                                    <table class="table main-table shadow-none main-table-2">
-                                                        <tr>
-                                                            <td colspan="2">
-                                                                <h6 class="text-muted">نام و نام خانوادگی</h6>
-                                                                <p class="fw-bold mt-2">@Model.firstName @Model.lastName</p>
-                                                            </td>
-                                                            <td colspan="2">
-                                                                <h6 class="text-muted">شماره تلفن</h6>
-                                                                <p class="fw-bold mt-2">@Model.PhoneNumber</p>
-                                                            </td>
-                                                        </tr>
-                                                        
-                                                        <tr>
-                                                            <td colspan="2">
-                                                                <h6>عضویت</h6>
-                                                                <p class="fw-bold mt-2">@Model.RegisterTime </p>
-                                                            </td>
-                                                            
-                                                        </tr>
-                                                        
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- end dashboard -->
-    </div> *@
-
-
-

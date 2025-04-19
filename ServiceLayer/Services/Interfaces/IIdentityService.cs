@@ -19,5 +19,6 @@ namespace ServiceLayer.Services.Interfaces
         bool CheckPermission(int permissionId, string phoneNumber);
         UserInfoForUserPanelViewModel GetUserInfoForUserPanel(string phoneNumber);
         UserPanelSidebarViewModels GetUserPanelSidebar(string phoneNumber);
+        bool AddNewPassword(NewPasswordViewModel model);
     }
 }

@@ -49,109 +49,20 @@
                     <span>کارنامه تحصیلی</span>
                 </a>
             </li> *@
+            
             <li>
-                
-                <a asp-area="" asp-controller="UserPanel" asp-action="NewPassword" class=" flex items-center p-3 text-gray-700 rounded-lg transition-all duration-200">
-                    <i class="fas fa-cog ml-2 text-blue-500"></i>
-                    <span>تغییر رمز عبور</span>
-                </a>
-            </li>
-            <li>
-                <a asp-area="" asp-controller="identity" asp-action="SignOut" class=" flex items-center p-3 text-gray-700 rounded-lg transition-all duration-200" >
-
-                    <i class="fas fa-sign-out-alt ml-2 text-blue-500"></i>
-                    <span>خروج از حساب</span>
-                </a>
+                <button class="">
+                    <a asp-area="" asp-controller="identity" asp-action="SignOut" class="sidebar-link flex items-center p-3 text-gray-700 rounded-lg transition-all duration-200">
+                        <i class="fas fa-sign-out-alt ml-2 text-blue-500"></i>
+                        <span>خروج از حساب</span>
+                    </a>
+                </button>
+               
             </li>
         </ul>
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-@* <div class="col-lg-3 mt-5">
-    <div class="ui-boxs">
-        <div class="ui-box">
-            <div class="ui-box-item">
-                <div class="ui-box-item-desc" style="border-radius: 10px;background-color: #fff;">
-
-                    <div class="dashboard-user-info">
-                        <h6 class="user-name">@userinfo.firstName @userinfo.lastName</h6>
-
-                    </div>
-                    <div class="dashboard-user-btn">
-                        <div>
-                            <i class="bi bi-key"></i>
-                            <a asp-area="" asp-controller="UserPanel" asp-action="NewPassword" class="text-muted">تغییر رمز عبور</a>
-                        </div>
-                        <div>
-                            <i class="bi bi-arrow-left-circle"></i>
-                            <a asp-area="" asp-controller="identity" asp-action="SignOut" class="text-muted ">خروج از حساب</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="ui-box">
-            <div class="ui-box-item">
-                <div class="ui-box-item-title" style="padding: 15px;">
-                    <h4 class="fw-bold">
-                        حساب کاربری شما
-                    </h4>
-                </div>
-                <div class="ui-box-item-desc p-0">
-                    <ul class="nav flex-column sidebar-menu">
-                        <li class="nav-item">
-                            <a asp-controller="UserPanel" asp-action="Dashboard" class="nav-link text-muted">
-                                <i class="bi bi-person-circle"></i>
-                                <span>ناحیه کاربری</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="UserPanel" asp-action="CreatePropertyByUser" class="nav-link text-muted">
-                                <i class="bi bi-person-circle"></i>
-                                <span>ثبت اجاره یا فروش ملک</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a asp-controller="UserPanel" asp-action="PropertyList" class="nav-link text-muted">
-                                <i class="bi bi-person-circle"></i>
-                                <span>املاک ثبت شده </span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a asp-controller="UserPanel" asp-action="SavedProperty" class="nav-link text-muted">
-                                <i class="bi bi-person-circle"></i>
-                                <span>املاک ذخیره شده  </span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-
-
-
-
-
-
-    </div>
-</div>
- *@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

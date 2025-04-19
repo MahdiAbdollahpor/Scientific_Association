@@ -43,3 +43,41 @@ body {
 .table-row:hover {
     background-color: #f8fafc;
 }
+
+.password-input-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #64748b;
+}
+
+.password-strength-meter {
+    height: 5px;
+    background-color: #e2e8f0;
+    border-radius: 2.5px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.password-strength-meter-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: none;
+}

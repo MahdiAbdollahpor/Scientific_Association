@@ -177,5 +177,19 @@ namespace ServiceLayer.Services
 
 
         }
+
+        public bool AddNewPassword(NewPasswordViewModel model)
+        {
+            if (model != null)
+            {
+                var user = _db.Users.FirstOrDefault(x => x.PhoneNumber == model.PhoneNumber);
+                user.Password = PasswordHelper.EncodePasswordMd5(model.Password);
+
+                _db.Users.Update(user);
+                _db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }
