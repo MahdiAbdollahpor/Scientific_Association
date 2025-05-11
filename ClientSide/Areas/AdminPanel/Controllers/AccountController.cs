@@ -9,16 +9,17 @@ namespace ClientSide.Areas.AdminPanel.Controllers
     [PermissionChecker(1)]  
     public class AccountController : Controller
     {
-        private readonly IIdentityService _identityService;
+        private readonly IAdminService _adminService;
 
-        public AccountController(IIdentityService identityService)
+        public AccountController(IAdminService adminService)
         {
-            _identityService = identityService;
+            _adminService = adminService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int pageId = 1, string search = "")
         {
-            return View();
+            var userList = _adminService.GetAllUserForAdmin(pageId, search);
+            return View(userList);
         }
     }
 }

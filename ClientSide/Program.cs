@@ -41,6 +41,7 @@ builder.Services.Configure<SecurityStampValidatorOptions>(x =>
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection")));
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 
 var app = builder.Build();
@@ -59,9 +60,19 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+    name: "adminpanel",
+    pattern: "{area:exists}/{controller=Account}/{action=Index}/{id?}"
+    );
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
+
+});
 
 app.Run();
