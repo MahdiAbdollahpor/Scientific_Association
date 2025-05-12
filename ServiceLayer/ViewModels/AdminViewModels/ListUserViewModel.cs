@@ -15,5 +15,6 @@ namespace ServiceLayer.ViewModels.AdminViewModels
         public string nationalCode { get; set; }
         public string studentNumber { get; set; }
         public string CreateDate { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

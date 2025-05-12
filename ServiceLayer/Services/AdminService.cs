@@ -41,6 +41,7 @@ namespace ServiceLayer.Services
                 PhoneNumber = x.PhoneNumber,
                 nationalCode = x.nationalCode,
                 studentNumber = x.studentNumber,
+                IsDeleted = x.IsDeleted,
                 Id = x.UserId
             }).ToList();
 
