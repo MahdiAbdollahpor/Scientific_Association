@@ -1,0 +1,64 @@
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@model ListUserViewModel
+
+<div class="overlay" id="user-modal-overlay"></div>
+<div class="user-modal" id="user-modal">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">ویرایش کاربر</h3>
+        <button class="text-gray-500 hover:text-gray-700 close-user-modal">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <form enctype="multipart/form-data" id="user-form"
+          asp-action="EditUser" asp-area="AdminPanel" asp-controller="Account"
+          method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreateDate" />
+
+        <div class="space-y-4">
+            <div>
+                <label asp-for="firstName" class="block text-sm font-medium text-gray-700">نام</label>
+                <input asp-for="firstName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <span asp-validation-for="firstName" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="lastName" class="block text-sm font-medium text-gray-700">نام خانوادگی</label>
+                <input asp-for="lastName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <span asp-validation-for="lastName" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-700">شماره تماس</label>
+                <input asp-for="PhoneNumber" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="nationalCode" class="block text-sm font-medium text-gray-700">کد ملی</label>
+                <input asp-for="nationalCode" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <span asp-validation-for="nationalCode" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="studentNumber" class="block text-sm font-medium text-gray-700">کد دانشجویی</label>
+                <input asp-for="studentNumber" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <span asp-validation-for="studentNumber" class="text-red-500 text-xs"></span>
+            </div>
+
+            <div>
+                <label asp-for="IsDeleted" class="block text-sm font-medium text-gray-700">وضعیت</label>
+                <select asp-for="IsDeleted" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="false">فعال</option>
+                    <option value="true">غیرفعال</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 close-user-modal">انصراف</button>
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">ذخیره تغییرات</button>
+        </div>
+    </form>
+</div>

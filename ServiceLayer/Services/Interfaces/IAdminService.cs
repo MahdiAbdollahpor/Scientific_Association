@@ -11,5 +11,8 @@ namespace ServiceLayer.Services.Interfaces
     public interface IAdminService
     {
         BaseFilterViewModel<ListUserViewModel> GetAllUserForAdmin(int pageIndex, string search);
+        ListUserViewModel GetUserById(int id);
+        int IsExistPhoneNumber(string PhoneNumber);
+        bool UpdateUser(ListUserViewModel model);
     }
 }

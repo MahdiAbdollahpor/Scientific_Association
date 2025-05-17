@@ -1,8 +1,11 @@
 ﻿using DataLayer.Context;
+using DataLayer.Models.Identity;
+using Microsoft.EntityFrameworkCore;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.AdminViewModels;
 using ServiceLayer.ViewModels.BaseViewModels;
+using ServiceLayer.ViewModels.IdentityViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +27,7 @@ namespace ServiceLayer.Services
         public BaseFilterViewModel<ListUserViewModel> GetAllUserForAdmin(int pageIndex, string search)
         {
             var userList = _db.Users.Where(x => x.IsDeleted == false).OrderByDescending(x => x.RegisterTime).ToList();
-            int take = 15;
+            int take = 10;
             int howManyPageShow = 2;
             var pager = PagingHelper.Pager(pageIndex, userList.Count(), take, howManyPageShow);
 
@@ -57,6 +60,57 @@ namespace ServiceLayer.Services
             };
 
             return res;
+        }
+
+        public ListUserViewModel GetUserById(int id)
+        {
+            return _db.Users.Where(x => x.UserId == id)
+                .Select(x => new ListUserViewModel
+                {
+                    firstName = x.firstName,
+                    lastName= x.lastName,
+                    PhoneNumber = x.PhoneNumber,
+                    nationalCode = x.nationalCode,
+                    studentNumber = x.studentNumber,
+                    IsDeleted = x.IsDeleted,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.RegisterTime, false),
+                    Id = x.UserId
+                }).FirstOrDefault();
+        }
+
+        
+
+        //1 => شماره موبایل وجود ندارد
+        // -1 => خطای دیتابیس
+        public int IsExistPhoneNumber(string PhoneNumber)
+        {
+            var res = _db.Users.FirstOrDefault(u => u.PhoneNumber == PhoneNumber);
+            if (res == null)
+            {
+                return 1;
+            }
+
+            return -1;
+        }
+
+        public  bool UpdateUser(ListUserViewModel model)
+        {
+            var res = _db.Users.FirstOrDefault(u => u.UserId == model.Id);
+
+            if(res !=null)
+            {
+                res.firstName = model.firstName;
+                res.lastName = model.lastName;
+                res.PhoneNumber = model.PhoneNumber;
+                res.nationalCode = model.nationalCode;
+                res.studentNumber = model.studentNumber;
+                res.IsDeleted = model.IsDeleted;
+                
+                _db.Users.Update(res);
+                _db.SaveChanges();
+                return true;
+            }
+            return  false;
         }
     }
 }

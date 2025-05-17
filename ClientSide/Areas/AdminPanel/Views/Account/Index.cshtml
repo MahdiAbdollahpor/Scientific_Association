@@ -28,10 +28,10 @@
                
             </div>
 
-            <button id="new-user-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none">
+           @*  <button id="new-user-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none">
                 <i class="fas fa-plus ml-2"></i>
                 کاربر جدید
-            </button>
+            </button> *@
         </div>
         <div class="bg-white shadow rounded-lg overflow-hidden">
             <div class="overflow-x-auto">
@@ -58,23 +58,24 @@
                         @foreach (var item in Model.Entities)
                         {
                             <tr>
-                                <th scope="row">@counter</th>
-                                <td>@item.firstName</td>
-                                <td>@item.lastName</td>
-                                <td>@item.PhoneNumber</td>
-                                <td>@item.nationalCode</td>
-                                <td>@item.studentNumber</td>
-                                <td>@item.CreateDate</td>
+                                <th class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" scope="row">@counter</th>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@item.firstName</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.lastName</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.PhoneNumber</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.nationalCode</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.studentNumber</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.CreateDate</td>
                                 <td>@(item.IsDeleted == true ? "غیر فعال" : " فعال")</td>
-                                
+
                                 <td>
-                                    <button class="text-yellow-600 hover:text-yellow-900 ml-2 edit-user-btn" data-user-id="${user.id}">
+                                    <button id="edit-user-btn" class="text-yellow-600 hover:text-yellow-900 ml-2 edit-user-btn"
+                                            data-user-id="@item.Id">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn" data-id="${user.id}" data-type="user">
+                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn"
+                                            data-id="@item.Id" data-type="user">
                                         <i class="fas fa-trash"></i>
                                     </button>
-
                                 </td>
                             </tr>
                             counter++;
@@ -135,3 +136,186 @@
     </div>
 
 
+
+
+
+
+
+
+
+
+<script>
+ 
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        //مدیریت رویداد کلیک برای ویرایش کاربر
+        document.addEventListener('click', function (e) {
+            const editBtn = e.target.closest('.edit-user-btn');
+            if (editBtn) {
+                e.preventDefault();
+                const userId = editBtn.getAttribute('data-user-id');
+                showEditUserModal(userId);
+            }
+        });
+
+    function showEditUserModal(userId) {
+        if (!userId || isNaN(userId)) {
+            console.error("شناسه نامعتبر است");
+            return;
+        }
+
+        fetch(`/AdminPanel/Account/EditUser/${userId}`)
+            .then(response => response.ok ? response.text() : Promise.reject("خطا در دریافت اطلاعات کاربر"))
+            .then(html => {
+                const modalContainer = document.createElement('div');
+                modalContainer.innerHTML = html;
+                document.body.appendChild(modalContainer);
+
+                document.getElementById('user-modal-overlay').classList.add('active');
+                document.getElementById('user-modal').classList.add('active');
+                setupModalEvents();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function setupModalEvents() {
+        document.querySelectorAll('.close-user-modal').forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        const userForm = document.getElementById('user-form');
+        if (userForm) {
+            userForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitUserForm(this);
+            });
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('user-modal-overlay').classList.remove('active');
+        document.getElementById('user-modal').classList.remove('active');
+
+        document.getElementById('user-modal')?.remove();
+        document.getElementById('user-modal-overlay')?.remove();
+    }
+
+        function submitUserForm(form) {
+           // نمایش Loader (اختیاری)
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال پردازش...';
+            submitBtn.disabled = true;
+
+          //  جمع‌آوری داده‌های فرم
+            const formData = new FormData(form);
+
+          //  تبدیل FormData به شیء ساده (برای خطایابی)
+            const formDataObj = {};
+            formData.forEach((value, key) => formDataObj[key] = value);
+            console.log('داده‌های ارسالی:', formDataObj);
+
+          //  ارسال با AJAX
+            $.ajax({
+                url: form.action,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    if (data.success) {
+                       // نمایش پیام موفقیت
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'موفق',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                       // نمایش خطاهای اعتبارسنجی
+                        showValidationErrors(data.errors || [data.message]);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    let errorMessage = 'خطا در ارتباط با سرور';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: errorMessage
+                    });
+                },
+                complete: function () {
+                   // بازگرداندن دکمه به حالت اول
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+       // تابع نمایش خطاهای اعتبارسنجی
+        function showValidationErrors(errors) {
+            let errorHtml = '<ul>';
+            errors.forEach(error => {
+                errorHtml += `<li>${error}</li>`;
+            });
+            errorHtml += '</ul>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'خطا در اعتبارسنجی',
+                html: errorHtml
+            });
+        }
+
+        // جستجوی زنده
+        const searchInput = document.getElementById('user-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce(function () {
+                const searchValue = this.value.trim().toLowerCase();
+                document.querySelectorAll('#users-table-body tr').forEach(row => {
+                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    row.style.display = name.includes(searchValue) ? '' : 'none';
+                });
+            }, 300));
+        }
+    });
+
+    // تابع debounce برای بهینه‌سازی جستجو
+    function debounce(func, wait) {
+        let timeout;
+        return function () {
+            const context = this, args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

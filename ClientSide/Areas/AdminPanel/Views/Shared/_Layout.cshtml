@@ -43,9 +43,8 @@
             </div>
         </div>
 
-      
 
-        @RenderBody()
+
 
         <!-- Mobile sidebar -->
         <div class="md:hidden fixed inset-0 z-40" id="mobile-sidebar" style="display: none;">
@@ -79,90 +78,42 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main content -->
-    <div class="flex flex-col flex-1 overflow-hidden">
-        <!-- Top navigation -->
-        <div class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200">
-            <button id="open-sidebar" class="md:hidden text-gray-500 focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="flex items-center">
-                <div class="relative">
-                    <button class="p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-                </div>
-                <div class="ml-4">
+        <!-- Main content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top navigation -->
+            <div class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200">
+                <button id="open-sidebar" class="md:hidden text-gray-500 focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="flex items-center">
                     <div class="relative">
-                        <button class="flex items-center text-sm font-medium text-gray-700 rounded-full focus:outline-none">
-                            <span class="sr-only">Open user menu</span>
-                            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-indigo-600"></i>
-                            </div>
+                        <button class="p-1 text-gray-400 rounded-full hover:text-gray-500 focus:outline-none">
+                            <i class="fas fa-bell"></i>
                         </button>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <div class="ml-4">
+                        <div class="relative">
+                            <button class="flex items-center text-sm font-medium text-gray-700 rounded-full focus:outline-none">
+                                <span class="sr-only">Open user menu</span>
+                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-indigo-600"></i>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+        @RenderBody()
+
 
 
     </div>
     
 
-    <!-- User Modal (for add/edit) -->
-    <div class="overlay" id="user-modal-overlay"></div>
-    <div class="user-modal" id="user-modal">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold" id="user-modal-title">افزودن کاربر جدید</h3>
-            <button class="text-gray-500 hover:text-gray-700 close-user-modal">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <form id="user-form">
-            <input type="hidden" id="user-id">
-            <div class="space-y-4">
-                <div>
-                    <label for="first-name" class="block text-sm font-medium text-gray-700">نام</label>
-                    <input type="text" id="first-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="last-name" class="block text-sm font-medium text-gray-700">نام خانوادگی</label>
-                    <input type="text" id="last-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700">شماره تماس</label>
-                    <input type="text" id="phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="national-id" class="block text-sm font-medium text-gray-700">کد ملی</label>
-                    <input type="text" id="national-id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="student-id" class="block text-sm font-medium text-gray-700">کد دانشجویی</label>
-                    <input type="text" id="student-id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="join-date" class="block text-sm font-medium text-gray-700">تاریخ عضویت</label>
-                    <input type="text" id="join-date" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700">وضعیت</label>
-                    <select id="status" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="active">فعال</option>
-                        <option value="inactive">غیرفعال</option>
-                        <option value="pending">در حال بررسی</option>
-                    </select>
-                </div>
-            </div>
-            <div class="mt-6 flex justify-end space-x-3">
-                <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 close-user-modal">انصراف</button>
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">ذخیره</button>
-            </div>
-        </form>
-    </div>
+    
 
     <!-- News Modal (for add/edit) -->
     <div class="overlay" id="news-modal-overlay"></div>
@@ -223,6 +174,10 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
+
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <partial name="_SiteMessage" />
