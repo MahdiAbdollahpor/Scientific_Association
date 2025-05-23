@@ -28,10 +28,7 @@
                
             </div>
 
-           @*  <button id="new-user-btn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none">
-                <i class="fas fa-plus ml-2"></i>
-                کاربر جدید
-            </button> *@
+          
         </div>
         <div class="bg-white shadow rounded-lg overflow-hidden">
             <div class="overflow-x-auto">
@@ -72,10 +69,13 @@
                                             data-user-id="@item.Id">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="text-red-600 hover:text-red-900 ml-2 delete-btn"
-                                            data-id="@item.Id" data-type="user">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+
+                                    <!-- دکمه چاپ -->
+                                    <a href="@Url.Action("PrintUserCard", "Account", new { area = "AdminPanel", id = item.Id })"
+                                       class="text-blue-600 hover:text-blue-900 ml-2">
+                                        <i class="fas fa-print"></i>
+                                    </a>
+                                  
                                 </td>
                             </tr>
                             counter++;
@@ -304,14 +304,7 @@
         };
     }
 
-
-
-
-
-
-
-
-
+  
 
 
 </script>
@@ -319,3 +312,4 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

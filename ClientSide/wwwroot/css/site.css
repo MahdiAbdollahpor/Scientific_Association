@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 body {
     font-family: 'Vazirmatn', sans-serif;
@@ -190,3 +190,9 @@ body {
         visibility: visible;
         transform: translate(-50%, -50%) scale(1);
     }
+
+/* استفاده از فونت ایمبد شده */
+@font-face {
+    font-family: 'Vazir';
+    src: url('data:font/truetype;charset=utf-8;base64,{BASE64_ENCODED_FONT}') format('truetype');
+}
