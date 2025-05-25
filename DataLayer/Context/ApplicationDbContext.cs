@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataLayer.Models.Item;
 
 namespace DataLayer.Context
 {
@@ -21,7 +22,9 @@ namespace DataLayer.Context
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
-        
+
+        public DbSet<News> News { get; set; }
+
 
     }
 }
