@@ -1,18 +1,10 @@
 ﻿using DataLayer.Context;
-using DataLayer.Models.Identity;
 using DataLayer.Models.Item;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.AdminViewModels;
 using ServiceLayer.ViewModels.BaseViewModels;
-using ServiceLayer.ViewModels.IdentityViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServiceLayer.Services
 {
@@ -208,7 +200,20 @@ namespace ServiceLayer.Services
             return "/images/news/" + uniqueFileName;
         }
 
-        public bool UpdateNews(NewsViewModel model)
+        public NewsEditViewModel GetNewsForEdit(int id)
+        {
+            return _db.News
+                .Where(n => n.Id == id)
+                .Select(n => new NewsEditViewModel
+                {
+                    Id = n.Id,
+                    Title = n.Title,
+                    Description = n.Description,
+                    CurrentImagePath = n.ImagePath
+                }).FirstOrDefault();
+        }
+
+        public bool UpdateNews(NewsEditViewModel model)
         {
             var news = _db.News.Find(model.Id);
             if (news == null) return false;
@@ -216,14 +221,15 @@ namespace ServiceLayer.Services
             news.Title = model.Title;
             news.Description = model.Description;
 
-            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            if (model.NewImageFile != null && model.NewImageFile.Length > 0)
             {
                 // حذف تصویر قبلی اگر وجود دارد
                 if (!string.IsNullOrEmpty(news.ImagePath))
                 {
                     DeleteImage(news.ImagePath);
                 }
-                news.ImagePath = SaveImage(model.ImageFile);
+                // ذخیره تصویر جدید
+                news.ImagePath = SaveImage(model.NewImageFile);
             }
 
             _db.News.Update(news);
@@ -270,6 +276,20 @@ namespace ServiceLayer.Services
             }
         }
 
+        public NewsDetailsViewModel GetNewsDetails(int id)
+        {
+            return _db.News
+                .Where(n => n.Id == id)
+                .Select(n => new NewsDetailsViewModel
+                {
+                    Id = n.Id,
+                    Title = n.Title,
+                    Description = n.Description,
+                    ImagePath = n.ImagePath,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(n.CreateDate, false)
+                })
+                .FirstOrDefault();
+        }
 
     }
 }

@@ -14,11 +14,12 @@ namespace ServiceLayer.Services.Interfaces
         ListUserViewModel GetUserById(int id);
         int IsExistPhoneNumber(string PhoneNumber);
         bool UpdateUser(ListUserViewModel model);
-
         BaseFilterViewModel<NewsViewModel> GetAllNewsForAdmin(int pageIndex, string search);
         NewsViewModel GetNewsById(int id);
         bool AddNews(NewsCreateViewModel model);
-        bool UpdateNews(NewsViewModel model);
+        NewsEditViewModel GetNewsForEdit(int id);
+        bool UpdateNews(NewsEditViewModel model);
         bool DeleteNews(int id);
+        NewsDetailsViewModel GetNewsDetails(int id);
     }
 }

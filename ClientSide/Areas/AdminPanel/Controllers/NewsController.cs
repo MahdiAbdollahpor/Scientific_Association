@@ -49,29 +49,35 @@ namespace ClientSide.Areas.AdminPanel.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditNews(int id)
+        public IActionResult Edit(int id)
         {
-            var news = _adminService.GetNewsById(id);
-            if (news == null) return NotFound();
-
-            return PartialView("_EditNewsModal", news);
+            var model = _adminService.GetNewsForEdit(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditNews(NewsViewModel model)
+        public IActionResult Edit(NewsEditViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return Json(new { success = false, message = "اطلاعات وارد شده معتبر نیست" });
+                return View(model);
             }
 
             var result = _adminService.UpdateNews(model);
-            return Json(new
+
+            if (result)
             {
-                success = result,
-                message = result ? "خبر با موفقیت ویرایش شد" : "خطا در ویرایش خبر"
-            });
+                TempData["SuccessMessage"] = "خبر با موفقیت ویرایش شد";
+                return RedirectToAction("Index");
+            }
+
+            TempData["ErrorMessage"] = "خطا در ویرایش خبر";
+            return View(model);
         }
 
         [HttpPost]
@@ -83,6 +89,17 @@ namespace ClientSide.Areas.AdminPanel.Controllers
                 success = result,
                 message = result ? "خبر با موفقیت حذف شد" : "خطا در حذف خبر"
             });
+        }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var news = _adminService.GetNewsDetails(id);
+            if (news == null)
+            {
+                return NotFound();
+            }
+            return View(news);
         }
     }
 }

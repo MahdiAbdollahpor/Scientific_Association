@@ -1,0 +1,43 @@
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@using System.Web
+@model NewsDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <article class="card shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="text-center p-3">
+                        <picture>
+                            <source srcset="@Model.ImagePath?width=400" media="(min-width: 450px)">
+                            <source srcset="@Model.ImagePath?width=300" media="(min-width: 250px)">
+                            <img src="@Model.ImagePath?width=200" class="card-img-top" alt="@Model.Title">
+                        </picture>
+                    </div>
+                }
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+
+                    <div class="d-flex justify-content-between text-muted mb-4">
+                        <small>تاریخ انتشار: @Model.CreateDate</small>
+                    </div>
+
+                    <div class="card-text">
+                        @Html.Raw(HttpUtility.HtmlEncode(Model.Description).Replace("\n", "<br>"))
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        بازگشت به لیست اخبار
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>

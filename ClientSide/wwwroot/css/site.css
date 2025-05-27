@@ -196,3 +196,16 @@ body {
     font-family: 'Vazir';
     src: url('data:font/truetype;charset=utf-8;base64,{BASE64_ENCODED_FONT}') format('truetype');
 }
+
+
+.news-card {
+    transition: all 0.3s ease;
+    display: block;
+    color: inherit;
+}
+
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        text-decoration: none;
+    }
