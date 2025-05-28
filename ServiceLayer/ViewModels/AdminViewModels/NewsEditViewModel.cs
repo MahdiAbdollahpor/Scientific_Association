@@ -24,6 +24,6 @@ namespace ServiceLayer.ViewModels.AdminViewModels
         public string CurrentImagePath { get; set; }
 
         [Display(Name = "تغییر تصویر")]
-        public IFormFile NewImageFile { get; set; }
+        public IFormFile? NewImageFile { get; set; }
     }
 }

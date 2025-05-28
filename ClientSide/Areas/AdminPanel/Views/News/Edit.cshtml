@@ -33,6 +33,8 @@
                             @if (!string.IsNullOrEmpty(Model.CurrentImagePath))
                             {
                                 <img src="@Model.CurrentImagePath" class="img-thumbnail d-block mb-2" style="max-height: 200px;" />
+
+                                <input hidden asp-for="CurrentImagePath" class="form-control" />
                             }
                             else
                             {
