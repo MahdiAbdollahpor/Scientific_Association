@@ -6,7 +6,30 @@
     Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
+<style>
+    .justified-text {
+        text-align: justify;
+        text-justify: inter-word; /* بهترین نوع جُسته‌کاری */
+        line-height: 2; /* فاصله بین خطوط */
+        font-size: 1.1rem; /* اندازه قابل خواندن */
+        margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+    }
+
+    .news-image {
+        max-width: 300px;
+        max-height: 500px;
+        margin: auto;
+    }
+
+    
+</style>
+
+<div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <article class="card shadow-sm">
@@ -16,7 +39,10 @@
                         <picture>
                             <source srcset="@Model.ImagePath?width=400" media="(min-width: 450px)">
                             <source srcset="@Model.ImagePath?width=300" media="(min-width: 250px)">
-                            <img src="@Model.ImagePath?width=200" class="card-img-top" alt="@Model.Title">
+                            <img src="@Model.ImagePath?width=200"
+                                 class="card-img-top"
+                                 alt="@Model.Title"
+                                 style="max-width: 1000px; max-height: 500px;">
                         </picture>
                     </div>
                 }
@@ -27,7 +53,7 @@
                         <small>تاریخ انتشار: @Model.CreateDate</small>
                     </div>
 
-                    <div class="card-text">
+                    <div class="card-text justified-text">
                         @Html.Raw(HttpUtility.HtmlEncode(Model.Description).Replace("\n", "<br>"))
                     </div>
                 </div>

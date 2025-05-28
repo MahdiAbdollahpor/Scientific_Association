@@ -209,3 +209,30 @@ body {
         box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         text-decoration: none;
     }
+
+
+.news-content {
+    max-height: 400px; /* حداکثر ارتفاع محتوا */
+    overflow-y: auto; /* اضافه کردن اسکرول عمودی وقتی متن بلندتر شد */
+    padding: 10px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+    /* optional: استایل زیبا برای اسکرول */
+    .news-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .news-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .news-content::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+        .news-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
