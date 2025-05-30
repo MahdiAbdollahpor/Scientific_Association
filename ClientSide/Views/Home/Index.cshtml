@@ -2,7 +2,159 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="bg-white rounded-lg shadow-md p-6">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">به ClientSide خوش آمدید</h1>
-    <p class="text-gray-600">محتوای اصلی سایت در این بخش نمایش داده می شود.</p>
+<div class="container mx-auto px-4 mt-5">
+    <main class="pb-3">
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-6 md:mb-0">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">انجمن علمی میکروبیولوژی دانشگاه آزاد</h1>
+                    <p class="text-gray-600 mb-4">به انجمن علمی میکروبیولوژی دانشگاه آزاد خوش آمدید. ما در این انجمن به بررسی و تحقیق در زمینه‌های مختلف میکروبیولوژی می‌پردازیم.</p>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">عضویت در انجمن</a>
+                        <a href="#" class="border border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-lg">اطلاعات بیشتر</a>
+                    </div>
+                </div>
+                @* <div class="md:w-1/2">
+                <img src="~/images/icon/photo18923572203.jpg" style="max-width: 700px; max-height: 300px;" alt="میکروبیولوژی" class="rounded-lg shadow-lg w-full">
+                </div> *@
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 border-r-4 border-blue-500 pr-3">آخرین اخبار</h2>
+                <a href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    مشاهده همه اخبار
+                    <i class="fas fa-arrow-left mr-2"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- News Item 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
+                    <div class="overflow-hidden">
+                        <img src="https://via.placeholder.com/400x300" alt="خبر میکروبیولوژی" class="w-full news-image">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="far fa-calendar-alt ml-1"></i>
+                            <span>۲۵ خرداد ۱۴۰۳</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">کشف جدید در زمینه باکتری‌های مقاوم به آنتی‌بیوتیک</h3>
+                        <p class="text-gray-600 mb-4">محققان انجمن علمی میکروبیولوژی دانشگاه آزاد موفق به کشف مکانیسم جدیدی در باکتری‌های مقاوم به آنتی‌بیوتیک شدند که می‌تواند...</p>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                            ادامه خبر
+                            <i class="fas fa-arrow-left mr-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- News Item 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
+                    <div class="overflow-hidden">
+                        <img src="https://via.placeholder.com/400x300" alt="خبر میکروبیولوژی" class="w-full news-image">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="far fa-calendar-alt ml-1"></i>
+                            <span>۱۸ خرداد ۱۴۰۳</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">برگزاری کارگاه تخصصی میکروسکوپ الکترونی</h3>
+                        <p class="text-gray-600 mb-4">انجمن علمی میکروبیولوژی دانشگاه آزاد با همکاری دانشکده علوم پایه، کارگاه تخصصی میکروسکوپ الکترونی را برگزار می‌کند...</p>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                            ادامه خبر
+                            <i class="fas fa-arrow-left mr-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- News Item 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
+                    <div class="overflow-hidden">
+                        <img src="https://via.placeholder.com/400x300" alt="خبر میکروبیولوژی" class="w-full news-image">
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="far fa-calendar-alt ml-1"></i>
+                            <span>۱۰ خرداد ۱۴۰۳</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">انتشار مقاله عضو انجمن در مجله معتبر Nature</h3>
+                        <p class="text-gray-600 mb-4">مقاله علمی عضو فعال انجمن میکروبیولوژی دانشگاه آزاد در زمینه ویروس‌شناسی در مجله معتبر Nature به چاپ رسید...</p>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                            ادامه خبر
+                            <i class="fas fa-arrow-left mr-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 border-r-4 border-blue-500 pr-3">رویدادهای آینده</h2>
+                <a href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    مشاهده همه رویدادها
+                    <i class="fas fa-arrow-left mr-2"></i>
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Event 1 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-blue-100 text-blue-800 rounded-lg p-3 mr-3">
+                                <i class="fas fa-microscope text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">سمینار تخصصی ویروس‌شناسی</h3>
+                                <p class="text-sm text-gray-500">تالار شهید چمران</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600"><i class="far fa-calendar-alt ml-1"></i> ۵ تیر ۱۴۰۳</span>
+                            <a href="#" class="text-blue-600">جزئیات بیشتر</a>
+                        </div>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-purple-100 text-purple-800 rounded-lg p-3 mr-3">
+                                <i class="fas fa-flask text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">کارگاه عملی کشت میکروبی</h3>
+                                <p class="text-sm text-gray-500">آزمایشگاه مرکزی</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600"><i class="far fa-calendar-alt ml-1"></i> ۱۲ تیر ۱۴۰۳</span>
+                            <a href="#" class="text-blue-600">جزئیات بیشتر</a>
+                        </div>
+                    </div>
+
+                    <!-- Event 3 -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-green-100 text-green-800 rounded-lg p-3 mr-3">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">جلسه عمومی انجمن</h3>
+                                <p class="text-sm text-gray-500">سالن اجتماعات</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600"><i class="far fa-calendar-alt ml-1"></i> ۲۰ تیر ۱۴۰۳</span>
+                            <a href="#" class="text-blue-600">جزئیات بیشتر</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 </div>

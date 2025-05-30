@@ -6,7 +6,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ClientSide</title>
+   
+    <title>انجمن علمی میکروبیولوژی دانشگاه آزاد</title>
+  
+
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ClientSide.styles.css" asp-append-version="true" />
@@ -14,6 +18,30 @@
     <!-- Bootstrap RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+     <style>
+       
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background-color: #f8f9fb;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .news-image {
+            height: 200px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        
+        .news-card:hover .news-image {
+            transform: scale(1.03);
+        }
+    </style>
+
 </head>
 <body style="background-color: #f8f9fb;">
 
@@ -24,12 +52,15 @@
         <input id="message4" type="hidden" value="@TempData["warning"]" />
     </div>
 
-
+    
     <header>
         <nav class="navbar bg-white border-b border-gray-200 mb-3 py-3">
             <div class="container mx-auto px-4">
                 <div class="flex justify-between items-center">
-                    
+                    <a class="flex items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/icon/photo18923572203.jpg" alt="لوگو انجمن" class="h-10 w-10 rounded-full">
+                        <span class="mr-2 font-bold text-lg text-blue-600">انجمن علمی میکروبیولوژی</span>
+                    </a>
 
                     <button class="md:hidden block text-gray-600 focus:outline-none" id="mobile-menu-button">
                         <i class="fas fa-bars text-xl"></i>
@@ -40,8 +71,19 @@
                             <li class="nav-item">
                                 <a class="nav-link text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Home" asp-action="Index">خانه</a>
                             </li>
-
-                             @if (!User.Identity.IsAuthenticated)
+                            <li class="nav-item">
+                                <a class="nav-link text-gray-700 hover:text-blue-500" href="#">درباره انجمن</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-gray-700 hover:text-blue-500" href="#">اخبار</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-gray-700 hover:text-blue-500" href="#">همایش‌ها</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-gray-700 hover:text-blue-500" href="#">تماس با ما</a>
+                            </li>
+                            @if (!User.Identity.IsAuthenticated)
                             {
                                 <li class="signin-btn">
                                     <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام</a>
@@ -59,7 +101,7 @@
                                     </a>
                                 </li>
                             }
-
+                           
                         </ul>
                     </div>
                 </div>
@@ -68,31 +110,53 @@
                 <div class="md:hidden hidden mt-4" id="mobile-menu">
                     <ul class="space-y-3">
                         <li>
-                            <a class="block text-gray-700 hover:text-blue-500 py-2" asp-area="" asp-controller="Home" asp-action="Index">خانه</a>
+                            <a class="block text-gray-700 hover:text-blue-500 py-2" href="#">خانه</a>
+                        </li>
+                        <li>
+                            <a class="block text-gray-700 hover:text-blue-500 py-2" href="#">درباره انجمن</a>
+                        </li>
+                        <li>
+                            <a class="block text-gray-700 hover:text-blue-500 py-2" href="#">اخبار</a>
+                        </li>
+                        <li>
+                            <a class="block text-gray-700 hover:text-blue-500 py-2" href="#">همایش‌ها</a>
+                        </li>
+                        <li>
+                            <a class="block text-gray-700 hover:text-blue-500 py-2" href="#">تماس با ما</a>
                         </li>
                         @if (!User.Identity.IsAuthenticated)
                         {
                             <li class="signin-btn">
-                                <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام</a>
+                                <a class="block text-gray-700 hover:text-blue-500 py-2" asp-area="" asp-controller="Identity" asp-action="RegisterByMobile">ثبت نام</a>
                             </li>
                             <li class="signin-btn">
-                                <a class="text-gray-700 hover:text-blue-500" asp-area="" asp-controller="Identity" asp-action="LoginByMobile">ورود</a>
+                                <a class="block text-gray-700 hover:text-blue-500 py-2" asp-area="" asp-controller="Identity" asp-action="LoginByMobile">ورود</a>
                             </li>
                         }
                         else
                         {
                             <li class="signin-btn">
-                                <a class="flex items-center text-blue-500 font-medium py-2" asp-controller="UserPanel" asp-action="Dashboard">
+                                <a class="flex items-center text-blue-500 font-medium" asp-controller="UserPanel" asp-action="Dashboard">
                                     <i class="fas fa-user-circle ml-2"></i>
                                     <span>@_identityService.GetDisplayNameByPhoneNumber(User.Identity.Name)</span>
                                 </a>
                             </li>
                         }
+                       
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
+
+
+
+
+
+
+
+   
 
     <div class="container mx-auto px-4 mt-5">
         <main class="pb-3">
@@ -101,18 +165,100 @@
         </main>
     </div>
 
-    <footer class="border-t border-gray-200 py-4 mt-8">
+
+
+
+
+
+
+
+
+
+
+    <footer class="border-t border-gray-200 py-8 bg-white">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-gray-600 mb-4 md:mb-0">
-                    &copy; 2025 - ClientSide
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
-                    <a href="#" class="text-gray-600 hover:text-blue-500">حریم خصوصی</a>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">انجمن علمی میکروبیولوژی</h3>
+                    <p class="text-gray-600 mb-4">انجمن علمی میکروبیولوژی دانشگاه آزاد با هدف پیشبرد علم میکروبیولوژی و تربیت دانشجویان متخصص فعالیت می‌کند.</p>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-telegram text-xl"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-twitter text-xl"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">لینک‌های سریع</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">خانه</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">درباره انجمن</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">اخبار</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">همایش‌ها</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-600">تماس با ما</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">تماس با ما</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-map-marker-alt ml-2"></i>
+                            <span>تهران، دانشگاه آزاد اسلامی</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-phone ml-2"></i>
+                            <span>۰۲۱-۱۲۳۴۵۶۷۸</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-envelope ml-2"></i>
+                            <span>microbiology@iau.ac.ir</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">عضویت در خبرنامه</h3>
+                    <p class="text-gray-600 mb-4">برای دریافت آخرین اخبار و اطلاعیه‌های انجمن ایمیل خود را وارد کنید.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="ایمیل شما" class="border border-gray-300 rounded-r-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-l-lg hover:bg-blue-700">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-gray-600 mb-4 md:mb-0">
+                        &copy; ۱۴۰۳ - انجمن علمی میکروبیولوژی دانشگاه آزاد
+                    </div>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="text-gray-600 hover:text-blue-600">حریم خصوصی</a>
+                        <a href="#" class="text-gray-600 hover:text-blue-600">قوانین و مقررات</a>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
+
+   
+
+
+
+
+
+
+
+
+
+
+
+   
+    
+
+   
 
  
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
