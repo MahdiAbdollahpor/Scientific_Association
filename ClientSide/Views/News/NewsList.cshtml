@@ -1,0 +1,122 @@
+﻿@using Humanizer
+@using ServiceLayer.ViewModels.AdminViewModels
+@using ServiceLayer.ViewModels.BaseViewModels
+@model BaseFilterViewModel<NewsViewModel>
+@{
+    ViewData["Title"] = "NewsList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="flex-1 overflow-auto p-6">
+    <div class="content-area" id="news-content">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">لیست اخبار</h2>
+
+           
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="news-container">
+
+
+            @foreach (var item in Model.Entities)
+            {
+                <div class="news-card bg-white rounded-lg shadow overflow-hidden">
+                    <img src="@item.ImagePath" alt="@item.Title" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">@item.Title</h3>
+                        <p class="text-gray-600 text-sm mb-4">@item.Description.Truncate(100)</p>
+                        <div class="flex justify-end space-x-2 space-x-reverse">
+                            <!-- space-x-reverse برای راست‌چینی بهتر -->
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-info-circle"></i> جزئیات
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+
+        </div>
+
+        @if (Model.PageCount > 1)
+        {
+            <div class="mt-6">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        @if (Model.PageIndex > Model.StartPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+                        }
+                        @for (int i = Model.StartPage; i <= Model.EndPage; i++)
+                        {
+                            <li class="page-item">
+                                <a class="page-link paginations @(Model.PageIndex == i ? "active" : "")" href="javascript:;">@i</a>
+                            </li>
+                        }
+                        @if (Model.PageIndex < Model.EndPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+
+        $(document).ready(function () {
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var newsModal = document.getElementById('newsModal');
+                if (newsModal) {
+                    var modal = new bootstrap.Modal(newsModal);
+
+                    // برای نمایش مودال
+                    document.getElementById('showModal').addEventListener('click', function () {
+                        modal.show();
+                    });
+                }
+            });
+
+            
+
+           
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function () {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+
+
+
+        
+
+       
+
+        
+
+    </script>
+}
+
+<!-- ترتیب صحیح -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

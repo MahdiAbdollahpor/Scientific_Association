@@ -49,6 +49,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServe
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 var app = builder.Build();
