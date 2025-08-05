@@ -1,4 +1,6 @@
-﻿@{
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@model List<NewsViewModel>
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -21,75 +23,43 @@
             </div>
         </section>
 
+
+
         <!-- News Section -->
         <section class="mb-12">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 border-r-4 border-blue-500 pr-3">آخرین اخبار</h2>
-                <a href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                <a asp-area="" asp-controller="News" asp-action="NewsList" class="text-blue-600 hover:text-blue-800 flex items-center">
                     مشاهده همه اخبار
                     <i class="fas fa-arrow-left mr-2"></i>
                 </a>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- News Item 1 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
-                    <div class="overflow-hidden">
-                        <img src="https://via.placeholder.com/400x300" alt="خبر میکروبیولوژی" class="w-full news-image">
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <i class="far fa-calendar-alt ml-1"></i>
-                            <span>۲۵ خرداد ۱۴۰۳</span>
+                @foreach (var news in Model)
+                {
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
+                        <div class="overflow-hidden">
+                            <img src="@(string.IsNullOrEmpty(news.ImagePath) ? "https://via.placeholder.com/400x300" : news.ImagePath)"
+                                 alt="@news.Title" class="w-full news-image h-48 object-cover">
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">کشف جدید در زمینه باکتری‌های مقاوم به آنتی‌بیوتیک</h3>
-                        <p class="text-gray-600 mb-4">محققان انجمن علمی میکروبیولوژی دانشگاه آزاد موفق به کشف مکانیسم جدیدی در باکتری‌های مقاوم به آنتی‌بیوتیک شدند که می‌تواند...</p>
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                            ادامه خبر
-                            <i class="fas fa-arrow-left mr-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- News Item 2 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
-                    <div class="overflow-hidden">
-                        <img src="https://via.placeholder.com/400x300" alt="خبر میکروبیولوژی" class="w-full news-image">
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <i class="far fa-calendar-alt ml-1"></i>
-                            <span>۱۸ خرداد ۱۴۰۳</span>
+                        <div class="p-5">
+                            
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">@news.Title</h3>
+                            <p class="text-gray-600 mb-4">
+                                @(news.Description.Length > 100 ? news.Description.Substring(0, 100) + "..." : news.Description)
+                            </p>
+                            <a asp-area="" asp-controller="News" asp-action="NewsDetails" asp-route-id="@news.Id"
+                               class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                ادامه خبر
+                                <i class="fas fa-arrow-left mr-2"></i>
+                            </a>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">برگزاری کارگاه تخصصی میکروسکوپ الکترونی</h3>
-                        <p class="text-gray-600 mb-4">انجمن علمی میکروبیولوژی دانشگاه آزاد با همکاری دانشکده علوم پایه، کارگاه تخصصی میکروسکوپ الکترونی را برگزار می‌کند...</p>
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                            ادامه خبر
-                            <i class="fas fa-arrow-left mr-2"></i>
-                        </a>
                     </div>
-                </div>
-
-                <!-- News Item 3 -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
-                    <div class="overflow-hidden">
-                        <img src="https://via.placeholder.com/400x300" alt="خبر میکروبیولوژی" class="w-full news-image">
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                            <i class="far fa-calendar-alt ml-1"></i>
-                            <span>۱۰ خرداد ۱۴۰۳</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">انتشار مقاله عضو انجمن در مجله معتبر Nature</h3>
-                        <p class="text-gray-600 mb-4">مقاله علمی عضو فعال انجمن میکروبیولوژی دانشگاه آزاد در زمینه ویروس‌شناسی در مجله معتبر Nature به چاپ رسید...</p>
-                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                            ادامه خبر
-                            <i class="fas fa-arrow-left mr-2"></i>
-                        </a>
-                    </div>
-                </div>
+                }
             </div>
         </section>
+
+       
 
         <!-- Events Section -->
         <section class="mb-12">

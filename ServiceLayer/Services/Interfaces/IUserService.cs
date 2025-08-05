@@ -12,5 +12,6 @@ namespace ServiceLayer.Services.Interfaces
     {
         BaseFilterViewModel<NewsViewModel> GetAllNewsForUser(int pageIndex, string search);
         NewsDetailsViewModel GetNewsDetails(int id);
+        List<NewsViewModel> GetLatestNews(int count);
     }
 }

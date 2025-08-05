@@ -68,5 +68,22 @@ namespace ServiceLayer.Services
                 })
                 .FirstOrDefault();
         }
+
+        public List<NewsViewModel> GetLatestNews(int count)
+        {
+            return _db.News
+                .Where(x => !x.IsDeleted)
+                .OrderByDescending(x => x.CreateDate)
+                .Take(count)
+                .Select(x => new NewsViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePath = x.ImagePath,
+                    
+                })
+                .ToList();
+        }
     }
 }

@@ -1,5 +1,6 @@
 using ClientSide.Models;
 using Microsoft.AspNetCore.Mvc;
+using ServiceLayer.Services.Interfaces;
 using System.Diagnostics;
 
 namespace ClientSide.Controllers
@@ -7,15 +8,18 @@ namespace ClientSide.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IUserService _userService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUserService userService)
         {
             _logger = logger;
+            _userService = userService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var latestNews = _userService.GetLatestNews(3);
+            return View(latestNews);
         }
 
         public IActionResult Privacy()
