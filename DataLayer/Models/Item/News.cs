@@ -24,6 +24,6 @@ namespace DataLayer.Models.Item
         public bool IsDeleted { get; set; } = false;
 
         // ارتباط یک به چند با NewsImage
-        public ICollection<NewsImage> Images { get; set; } = new List<NewsImage>();
+        public  ICollection<NewsImage> Images { get; set; } = new List<NewsImage>();
     }
 }

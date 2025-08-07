@@ -48,7 +48,7 @@
                             <p class="text-gray-600 mb-4">
                                 @(news.Description.Length > 100 ? news.Description.Substring(0, 100) + "..." : news.Description)
                             </p>
-                            <a asp-area="" asp-controller="News" asp-action="NewsDetails" asp-route-id="@news.Id"
+                            <a asp-area="" asp-controller="News" asp-action="Details" asp-route-id="@news.Id"
                                class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
                                 ادامه خبر
                                 <i class="fas fa-arrow-left mr-2"></i>

@@ -110,7 +110,7 @@ namespace ServiceLayer.Services
 
         public BaseFilterViewModel<NewsViewModel> GetAllNewsForAdmin(int pageIndex, string search)
         {
-            var newsList = _db.News.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
+            var newsList = _db.News.Include(x => x.Images).Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
             int take = 10;
             int howManyPageShow = 2;
             var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
@@ -140,7 +140,7 @@ namespace ServiceLayer.Services
 
         public NewsViewModel GetNewsById(int id)
         {
-            return _db.News.Where(x => x.Id == id)
+            return _db.News.Include(n => n.Images).Where(x => x.Id == id)
                 .Select(x => new NewsViewModel
                 {
                     Id = x.Id,
@@ -210,6 +210,7 @@ namespace ServiceLayer.Services
         public NewsEditViewModel GetNewsForEdit(int id)
         {
             return _db.News
+                .Include(n => n.Images)
                 .Where(n => n.Id == id)
                 .Select(n => new NewsEditViewModel
                 {
@@ -301,6 +302,7 @@ namespace ServiceLayer.Services
         public NewsDetailsViewModel GetNewsDetails(int id)
         {
             return _db.News
+                .Include(n => n.Images)
                 .Where(n => n.Id == id)
                 .Select(n => new NewsDetailsViewModel
                 {

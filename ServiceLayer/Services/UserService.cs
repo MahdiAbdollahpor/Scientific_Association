@@ -1,4 +1,5 @@
 ﻿using DataLayer.Context;
+using Microsoft.EntityFrameworkCore;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.AdminViewModels;
@@ -21,7 +22,7 @@ namespace ServiceLayer.Services
         }
         public BaseFilterViewModel<NewsViewModel> GetAllNewsForUser(int pageIndex, string search)
         {
-            var newsList = _db.News.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
+            var newsList = _db.News.Include(x => x.Images).Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
             int take = 10;
             int howManyPageShow = 2;
             var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
@@ -52,6 +53,7 @@ namespace ServiceLayer.Services
         public NewsDetailsViewModel GetNewsDetails(int id)
         {
             return _db.News
+                .Include(n => n.Images)
                 .Where(n => n.Id == id)
                 .Select(n => new NewsDetailsViewModel
                 {
@@ -66,7 +68,7 @@ namespace ServiceLayer.Services
 
         public List<NewsViewModel> GetLatestNews(int count)
         {
-            return _db.News
+            return _db.News.Include(n => n.Images)
                 .Where(x => !x.IsDeleted)
                 .OrderByDescending(x => x.CreateDate)
                 .Take(count)

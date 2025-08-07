@@ -19,6 +19,6 @@ namespace DataLayer.Models.Item
         [MaxLength(500)]
         public string ImagePath { get; set; }
 
-        public News News { get; set; }
+        public  News News { get; set; }
     }
 }
