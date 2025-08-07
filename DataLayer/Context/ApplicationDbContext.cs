@@ -24,6 +24,7 @@ namespace DataLayer.Context
         public DbSet<RolePermission> RolePermissions { get; set; }
 
         public DbSet<News> News { get; set; }
+        public DbSet<NewsImage> NewsImages { get; set; }
 
 
     }

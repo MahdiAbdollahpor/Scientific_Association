@@ -19,10 +19,11 @@ namespace DataLayer.Models.Item
         [Required]
         public string Description { get; set; }
 
-        [MaxLength(500)]
-        public string ImagePath { get; set; }
-
+        
         public DateTime CreateDate { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
+
+        // ارتباط یک به چند با NewsImage
+        public ICollection<NewsImage> Images { get; set; } = new List<NewsImage>();
     }
 }

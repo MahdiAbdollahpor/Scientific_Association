@@ -22,28 +22,23 @@ namespace ServiceLayer.Services
         public BaseFilterViewModel<NewsViewModel> GetAllNewsForUser(int pageIndex, string search)
         {
             var newsList = _db.News.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
-
             int take = 10;
             int howManyPageShow = 2;
             var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
-
             if (!string.IsNullOrEmpty(search))
             {
                 newsList = newsList.Where(x =>
                     x.Title.Contains(search) ||
                     x.Description.Contains(search)).ToList();
             }
-
             var result = newsList.Select(x => new NewsViewModel
             {
                 Id = x.Id,
                 Title = x.Title,
                 Description = x.Description,
-                ImagePath = x.ImagePath
+                ImagePaths = x.Images.Select(i => i.ImagePath).ToList()
             }).ToList();
-
             var outPut = PagingHelper.Pagination<NewsViewModel>(result, pager);
-
             return new BaseFilterViewModel<NewsViewModel>
             {
                 EndPage = pager.EndPage,
@@ -63,7 +58,7 @@ namespace ServiceLayer.Services
                     Id = n.Id,
                     Title = n.Title,
                     Description = n.Description,
-                    ImagePath = n.ImagePath,
+                    ImagePaths = n.Images.Select(i => i.ImagePath).ToList(),
                     CreateDate = MyDateTime.GetShamsiDateFromGregorian(n.CreateDate, false)
                 })
                 .FirstOrDefault();
@@ -80,8 +75,8 @@ namespace ServiceLayer.Services
                     Id = x.Id,
                     Title = x.Title,
                     Description = x.Description,
-                    ImagePath = x.ImagePath,
-                    
+                    ImagePaths = x.Images.Select(i => i.ImagePath).ToList()
+
                 })
                 .ToList();
         }

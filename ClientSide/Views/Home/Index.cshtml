@@ -39,8 +39,8 @@
                 {
                     <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
                         <div class="overflow-hidden">
-                            <img src="@(string.IsNullOrEmpty(news.ImagePath) ? "https://via.placeholder.com/400x300" : news.ImagePath)"
-                                 alt="@news.Title" class="w-full news-image h-48 object-cover">
+                            <img src="@(news.ImagePaths.FirstOrDefault() ?? "/images/no-image.jpg")"
+                                 alt="@news.Title" class="w-full h-48 object-cover">
                         </div>
                         <div class="p-5">
                             

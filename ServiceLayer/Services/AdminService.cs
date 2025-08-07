@@ -1,6 +1,7 @@
 ﻿using DataLayer.Context;
 using DataLayer.Models.Item;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.AdminViewModels;
@@ -110,28 +111,23 @@ namespace ServiceLayer.Services
         public BaseFilterViewModel<NewsViewModel> GetAllNewsForAdmin(int pageIndex, string search)
         {
             var newsList = _db.News.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
-
             int take = 10;
             int howManyPageShow = 2;
             var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
-
             if (!string.IsNullOrEmpty(search))
             {
                 newsList = newsList.Where(x =>
                     x.Title.Contains(search) ||
                     x.Description.Contains(search)).ToList();
             }
-
             var result = newsList.Select(x => new NewsViewModel
             {
                 Id = x.Id,
                 Title = x.Title,
                 Description = x.Description,
-                ImagePath = x.ImagePath
+                ImagePaths = x.Images.Select(i => i.ImagePath).ToList() // تغییر اینجا
             }).ToList();
-
             var outPut = PagingHelper.Pagination<NewsViewModel>(result, pager);
-
             return new BaseFilterViewModel<NewsViewModel>
             {
                 EndPage = pager.EndPage,
@@ -150,7 +146,7 @@ namespace ServiceLayer.Services
                     Id = x.Id,
                     Title = x.Title,
                     Description = x.Description,
-                    ImagePath = x.ImagePath
+                    ImagePaths = x.Images.Select(i => i.ImagePath).ToList()
                 }).FirstOrDefault();
         }
 
@@ -162,21 +158,32 @@ namespace ServiceLayer.Services
                 {
                     Title = model.Title,
                     Description = model.Description
-                    
                 };
+                _db.News.Add(news);
+                _db.SaveChanges(); // برای گرفتن Id
 
-                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                // ذخیره تصاویر
+                if (model.ImageFiles != null && model.ImageFiles.Count > 0)
                 {
-                    news.ImagePath =  SaveImage(model.ImageFile);
+                    foreach (var file in model.ImageFiles)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var imagePath = SaveImage(file);
+                            _db.NewsImages.Add(new NewsImage
+                            {
+                                NewsId = news.Id,
+                                ImagePath = imagePath
+                            });
+                        }
+                    }
+                    _db.SaveChanges();
                 }
 
-                _db.News.Add(news);
-                _db.SaveChanges();
                 return true;
             }
             catch (Exception ex)
             {
-                // لاگ خطا
                 return false;
             }
         }
@@ -209,27 +216,42 @@ namespace ServiceLayer.Services
                     Id = n.Id,
                     Title = n.Title,
                     Description = n.Description,
-                    CurrentImagePath = n.ImagePath
+                    CurrentImagePaths = n.Images.Select(i => i.ImagePath).ToList()
                 }).FirstOrDefault();
         }
 
         public bool UpdateNews(NewsEditViewModel model)
         {
-            var news = _db.News.Find(model.Id);
+            var news = _db.News.Include(n => n.Images).FirstOrDefault(n => n.Id == model.Id);
             if (news == null) return false;
 
             news.Title = model.Title;
             news.Description = model.Description;
 
-            if (model.NewImageFile != null && model.NewImageFile.Length > 0)
+            // حذف تصاویر قدیمی اگر لیست جدید داده شده باشد
+            if (model.NewImageFiles != null && model.NewImageFiles.Count > 0)
             {
-                // حذف تصویر قبلی اگر وجود دارد
-                if (!string.IsNullOrEmpty(news.ImagePath))
+                foreach (var img in news.Images)
                 {
-                    DeleteImage(news.ImagePath);
+                    DeleteImage(img.ImagePath);
                 }
-                // ذخیره تصویر جدید
-                news.ImagePath = SaveImage(model.NewImageFile);
+                _db.NewsImages.RemoveRange(news.Images);
+                _db.SaveChanges();
+
+                // ذخیره تصاویر جدید
+                foreach (var file in model.NewImageFiles)
+                {
+                    if (file.Length > 0)
+                    {
+                        var imagePath = SaveImage(file);
+                        _db.NewsImages.Add(new NewsImage
+                        {
+                            NewsId = news.Id,
+                            ImagePath = imagePath
+                        });
+                    }
+                }
+                _db.SaveChanges();
             }
 
             _db.News.Update(news);
@@ -285,7 +307,7 @@ namespace ServiceLayer.Services
                     Id = n.Id,
                     Title = n.Title,
                     Description = n.Description,
-                    ImagePath = n.ImagePath,
+                    ImagePaths = n.Images.Select(i => i.ImagePath).ToList(),
                     CreateDate = MyDateTime.GetShamsiDateFromGregorian(n.CreateDate, false)
                 })
                 .FirstOrDefault();

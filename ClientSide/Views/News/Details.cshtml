@@ -2,16 +2,15 @@
 @using System.Web
 @model NewsDetailsViewModel
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <style>
     .justified-text {
         text-align: justify;
-        text-justify: inter-word; /* بهترین نوع جُسته‌کاری */
-        line-height: 2; /* فاصله بین خطوط */
-        font-size: 1.1rem; /* اندازه قابل خواندن */
+        text-justify: inter-word;
+        line-height: 2;
+        font-size: 1.1rem;
         margin-bottom: 1.5rem;
     }
 
@@ -20,49 +19,140 @@
         font-weight: bold;
     }
 
-    .news-image {
-        max-width: 300px;
-        max-height: 500px;
-        margin: auto;
+    .slide-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
     }
 
+    .slide-img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .d-none {
+        display: none;
+    }
+
+    .slide-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+        .slide-nav.left {
+            left: 10px;
+        }
+
+        .slide-nav.right {
+            right: 10px;
+        }
+
+    .dots {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ccc;
+        cursor: pointer;
+    }
+
+        .dot.active {
+            background: #333;
+        }
 </style>
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <article class="card shadow-sm">
-                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                @if (Model.ImagePaths != null && Model.ImagePaths.Any())
                 {
-                    <div class="text-center p-3">
-                        <picture>
-                            <source srcset="@Model.ImagePath?width=400" media="(min-width: 450px)">
-                            <source srcset="@Model.ImagePath?width=300" media="(min-width: 250px)">
-                            <img src="@Model.ImagePath?width=200"
-                                 class="card-img-top"
-                                 alt="@Model.Title"
-                                 style="max-width: 1000px; max-height: 500px;">
-                        </picture>
+                    <div class="text-center p-3 position-relative">
+                        <div class="slide-container">
+                            @for (int i = 0; i < Model.ImagePaths.Count; i++)
+                            {
+                                <img src="@Model.ImagePaths[i]?width=600"
+                                     class="slide-img @(i == 0 ? "" : "d-none")"
+                                     alt="@Model.Title - @(i+1)"
+                                     style="max-height: 500px; object-fit: cover; width: 100%;" />
+                            }
+                        </div>
+                        <button type="button" class="slide-nav left" onclick="changeSlide(-1)">‹</button>
+                        <button type="button" class="slide-nav right" onclick="changeSlide(1)">›</button>
+                        <div class="dots">
+                            @for (int i = 0; i < Model.ImagePaths.Count; i++)
+                            {
+                                <span class="dot @(i == 0 ? "active" : "")" onclick="goToSlide(@i)"></span>
+                            }
+                        </div>
                     </div>
                 }
                 <div class="card-body">
                     <h1 class="card-title">@Model.Title</h1>
-
                     <div class="d-flex justify-content-between text-muted mb-4">
                         <small>تاریخ انتشار: @Model.CreateDate</small>
                     </div>
-
                     <div class="card-text justified-text">
-                        @Html.Raw(HttpUtility.HtmlEncode(Model.Description).Replace("\n", "<br>"))
+                        @Html.Raw(HttpUtility.HtmlEncode(Model.Description).Replace("\n", "<br />"))
                     </div>
                 </div>
                 <div class="card-footer bg-transparent text-center">
-                    <a asp-action="NewsList" class="btn btn-primary">
+                    <a href="javascript:history.back()" class="btn btn-primary">
                         <i class="fas fa-arrow-left ml-2"></i>
-                        بازگشت به لیست اخبار
+                        بازگشت
                     </a>
                 </div>
             </article>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-img');
+        const dots = document.querySelectorAll('.dot');
+
+        function showSlide(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+
+            slides.forEach(s => s.classList.add('d-none'));
+            dots.forEach(d => d.classList.remove('active'));
+            slides[index].classList.remove('d-none');
+            dots[index].classList.add('active');
+
+            currentSlide = index;
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+        }
+
+        // شروع با اسلاید اول
+        showSlide(0);
+    </script>
+}

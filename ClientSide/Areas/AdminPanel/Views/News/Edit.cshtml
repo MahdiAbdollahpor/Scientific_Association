@@ -4,7 +4,6 @@
     ViewData["Title"] = "ویرایش خبر";
     Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
 }
-
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -15,39 +14,39 @@
                 <div class="card-body">
                     <form asp-action="Edit" enctype="multipart/form-data" method="post">
                         <input type="hidden" asp-for="Id" />
-                        
                         <div class="form-group mb-3">
                             <label asp-for="Title" class="form-label"></label>
                             <input asp-for="Title" class="form-control" />
                             <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
-                        
                         <div class="form-group mb-3">
                             <label asp-for="Description" class="form-label"></label>
                             <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
-                        
                         <div class="form-group mb-3">
-                            <label class="form-label">تصویر فعلی</label>
-                            @if (!string.IsNullOrEmpty(Model.CurrentImagePath))
-                            {
-                                <img src="@Model.CurrentImagePath" class="img-thumbnail d-block mb-2" style="max-height: 200px;" />
-
-                                <input hidden asp-for="CurrentImagePath" class="form-control" />
-                            }
-                            else
-                            {
-                                <p class="text-muted">تصویری وجود ندارد</p>
-                            }
+                            <label>تصاویر فعلی</label>
+                            <div class="row">
+                                @if (Model.CurrentImagePaths != null && Model.CurrentImagePaths.Any())
+                                {
+                                    @foreach (var img in Model.CurrentImagePaths)
+                                    {
+                                        <div class="col-4 mb-2">
+                                            <img src="@img" class="img-thumbnail" style="height: 100px; object-fit: cover;" />
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">تصویری وجود ندارد</p>
+                                }
+                            </div>
                         </div>
-                        
                         <div class="form-group mb-3">
-                            <label asp-for="NewImageFile" class="form-label"></label>
-                            <input type="file" asp-for="NewImageFile" class="form-control" />
-                            <span asp-validation-for="NewImageFile" class="text-danger"></span>
+                            <label asp-for="NewImageFiles" class="form-label"></label>
+                            <input type="file" asp-for="NewImageFiles" class="form-control" multiple />
+                            <span asp-validation-for="NewImageFiles" class="text-danger"></span>
                         </div>
-                        
                         <div class="form-group mt-4">
                             <button type="submit" class="btn btn-warning">ذخیره تغییرات</button>
                             <a asp-action="Index" class="btn btn-secondary">بازگشت</a>
@@ -58,13 +57,10 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    
     <script>
-        // نمایش پیام‌های عملیات
-        $(document).ready(function() {
+        $(document).ready(function () {
             if ('@TempData["SuccessMessage"]' !== '') {
                 Swal.fire({
                     icon: 'success',
@@ -73,7 +69,6 @@
                     timer: 3000
                 });
             }
-            
             if ('@TempData["ErrorMessage"]' !== '') {
                 Swal.fire({
                     icon: 'error',

@@ -18,7 +18,7 @@ namespace ServiceLayer.ViewModels.AdminViewModels
         [Display(Name = "متن خبر")]
         public string Description { get; set; }
 
-        [Display(Name = "تصویر خبر")]
-        public IFormFile ImageFile { get; set; }
+        [Display(Name = "تصاویر خبر")]
+        public List<IFormFile> ImageFiles { get; set; } // تغییر از ImageFile به ImageFiles
     }
 }

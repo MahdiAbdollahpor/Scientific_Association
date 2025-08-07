@@ -20,10 +20,10 @@ namespace ServiceLayer.ViewModels.AdminViewModels
         [Display(Name = "محتوا")]
         public string Description { get; set; }
 
-        [Display(Name = "تصویر فعلی")]
-        public string CurrentImagePath { get; set; }
+        // لیست تصاویر فعلی
+        public List<string> CurrentImagePaths { get; set; } = new List<string>();
 
-        [Display(Name = "تغییر تصویر")]
-        public IFormFile? NewImageFile { get; set; }
+        [Display(Name = "افزودن تصاویر جدید")]
+        public List<IFormFile>? NewImageFiles { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace ServiceLayer.ViewModels.AdminViewModels
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ImagePath { get; set; }
+        public List<string> ImagePaths { get; set; } = new List<string>(); // تغییر از string به List<string>
         public string CreateDate { get; set; }
     }
 }
