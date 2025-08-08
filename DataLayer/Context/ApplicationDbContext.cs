@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataLayer.Models.Item;
+using DataLayer.Models.Event;
 
 namespace DataLayer.Context
 {
@@ -25,6 +26,9 @@ namespace DataLayer.Context
 
         public DbSet<News> News { get; set; }
         public DbSet<NewsImage> NewsImages { get; set; }
+
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventRegistration> EventRegistrations { get; set; }
 
 
     }

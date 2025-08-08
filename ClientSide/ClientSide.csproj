@@ -30,4 +30,8 @@
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\events\" />
+  </ItemGroup>
+
 </Project>

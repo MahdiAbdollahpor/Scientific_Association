@@ -1,0 +1,168 @@
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@model EventDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .justified-text {
+        text-align: justify;
+        text-justify: inter-word;
+        line-height: 2;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+    }
+
+    .registration-status-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .registration-status-approved {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <article class="card shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="text-center p-3">
+                        <img src="@Model.ImagePath" alt="@Model.Title" class="img-fluid rounded" style="max-height: 400px; object-fit: cover;">
+                    </div>
+                }
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+                    <div class="d-flex justify-content-between text-muted mb-4">
+                        <div>
+                            <small>
+                                <i class="far fa-calendar-alt ml-1"></i>
+                                تاریخ انتشار: @Model.CreateDate
+                            </small>
+                        </div>
+                        <div>
+                            <small>
+                                <i class="fas fa-user-clock ml-1"></i>
+                                مهلت ثبت‌نام: @Model.RegistrationDeadline
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-text justified-text">
+                        @Html.Raw(Model.Description.Replace("\n", "<br />"))
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-bold mb-3">زمان برگزاری:</h4>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <i class="far fa-calendar-check ml-2"></i>
+                            @Model.EventStartDate
+                            @if (!string.IsNullOrEmpty(Model.EventEndDate))
+                            {
+                                <span>تا @Model.EventEndDate</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">ثبت‌نام‌ها (@Model.Registrations.Count)</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div id="registrations-container">
+                        <!-- محتوای ثبت‌نام‌ها از طریق AJAX بارگذاری می‌شود -->
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent text-center">
+                <a href="javascript:history.back()" class="btn btn-primary">
+                    <i class="fas fa-arrow-left ml-2"></i>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // بارگذاری اولیه لیست ثبت‌نام‌ها
+            loadRegistrations(1);
+
+            // تابع بارگذاری ثبت‌نام‌ها
+            function loadRegistrations(pageId) {
+                $.get('/AdminPanel/Event/GetRegistrations', { eventId: @Model.Id, pageId: pageId }, function (data) {
+                    $('#registrations-container').html(data);
+                });
+            }
+
+            // مدیریت رویداد کلیک برای تایید ثبت‌نام
+            $(document).on('click', '.approve-registration', function () {
+                var registrationId = $(this).data('id');
+                $.post('/AdminPanel/Event/ApproveRegistration', { registrationId: registrationId }, function (response) {
+                    if (response.success) {
+                        Swal.fire(
+                            'موفقیت',
+                            response.message,
+                            'success'
+                        ).then(() => {
+                            loadRegistrations(1);
+                        });
+                    } else {
+                        Swal.fire(
+                            'خطا',
+                            response.message,
+                            'error'
+                        );
+                    }
+                });
+            });
+
+            // مدیریت رویداد کلیک برای رد ثبت‌نام
+            $(document).on('click', '.reject-registration', function () {
+                var registrationId = $(this).data('id');
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    text: "این عمل قابل بازگشت نیست!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'بله، رد شود!',
+                    cancelButtonText: 'انصراف'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/AdminPanel/Event/RejectRegistration', { registrationId: registrationId }, function (response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'موفقیت',
+                                    response.message,
+                                    'success'
+                                ).then(() => {
+                                    loadRegistrations(1);
+                                });
+                            } else {
+                                Swal.fire(
+                                    'خطا',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

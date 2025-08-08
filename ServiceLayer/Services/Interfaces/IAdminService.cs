@@ -21,5 +21,19 @@ namespace ServiceLayer.Services.Interfaces
         bool UpdateNews(NewsEditViewModel model);
         bool DeleteNews(int id);
         NewsDetailsViewModel GetNewsDetails(int id);
+
+
+        // evant service
+
+        BaseFilterViewModel<EventViewModel> GetAllEventsForAdmin(int pageIndex, string search);
+        EventViewModel GetEventById(int id);
+        bool AddEvent(EventCreateViewModel model);
+        EventEditViewModel GetEventForEdit(int id);
+        bool UpdateEvent(EventEditViewModel model);
+        bool DeleteEvent(int id);
+        EventDetailsViewModel GetEventDetails(int id);
+        bool ApproveRegistration(int registrationId);
+        bool RejectRegistration(int registrationId);
+        BaseFilterViewModel<EventRegistrationViewModel> GetEventRegistrations(int eventId, int pageIndex);
     }
 }

@@ -1,0 +1,58 @@
+﻿@using ServiceLayer.PublicClasses
+@using ServiceLayer.ViewModels.AdminViewModels
+@using ServiceLayer.ViewModels.UserViewModels
+@model List<EventViewModel>
+@{
+    ViewData["Title"] = "همایش‌ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 mt-5">
+    <main class="pb-3">
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 border-r-4 border-blue-500 pr-3">همایش‌های آینده</h2>
+                <a asp-action="MyEvents" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    مشاهده همایش‌های من
+                    <i class="fas fa-arrow-left mr-2"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach (var eventItem in Model)
+                {
+                    <div class="event-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                        <div class="overflow-hidden">
+                            <img src="@(eventItem.ImagePath ?? "/images/no-image.jpg")"
+                                 alt="@eventItem.Title" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">@eventItem.Title</h3>
+                            <div class="flex items-center text-sm text-gray-600 mb-2">
+                                <i class="far fa-calendar-alt ml-2"></i>
+                                <span>
+                                    @MyDateTime.GetShamsiDateFromGregorian(eventItem.EventStartDate, false)
+                                    @if (eventItem.EventEndDate.HasValue)
+                                    {
+                                        <span>تا @MyDateTime.GetShamsiDateFromGregorian(eventItem.EventEndDate.Value, false)</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600 mb-4">
+                                <i class="fas fa-user-clock ml-2"></i>
+                                <span>مهلت ثبت‌نام: @MyDateTime.GetShamsiDateFromGregorian(eventItem.RegistrationDeadline, false)</span>
+                            </div>
+                            <div class="flex justify-end">
+                                <a asp-action="Details" asp-route-id="@eventItem.Id"
+                                   class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                    جزئیات و ثبت‌نام
+                                    <i class="fas fa-arrow-left mr-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    </main>
+</div>

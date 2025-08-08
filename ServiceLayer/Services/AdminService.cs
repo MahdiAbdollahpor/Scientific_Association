@@ -1,4 +1,5 @@
 ﻿using DataLayer.Context;
+using DataLayer.Models.Event;
 using DataLayer.Models.Item;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -313,6 +314,260 @@ namespace ServiceLayer.Services
                     CreateDate = MyDateTime.GetShamsiDateFromGregorian(n.CreateDate, false)
                 })
                 .FirstOrDefault();
+        }
+
+
+        // evant service
+        public BaseFilterViewModel<EventViewModel> GetAllEventsForAdmin(int pageIndex, string search)
+        {
+            var eventList = _db.Events.Include(x => x.Registrations).Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
+            int take = 10;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, eventList.Count(), take, howManyPageShow);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                eventList = eventList.Where(x =>
+                    x.Title.Contains(search) ||
+                    x.Description.Contains(search)).ToList();
+            }
+
+            var result = eventList.Select(x => new EventViewModel
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Description = x.Description,
+                ImagePath = x.ImagePath,
+                RegistrationDeadline = x.RegistrationDeadline,
+                EventStartDate = x.EventStartDate,
+                EventEndDate = x.EventEndDate,
+                RegisteredUsersCount = x.Registrations.Count,
+                CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
+            }).ToList();
+
+            var outPut = PagingHelper.Pagination<EventViewModel>(result, pager);
+
+            return new BaseFilterViewModel<EventViewModel>
+            {
+                EndPage = pager.EndPage,
+                Entities = outPut,
+                PageCount = pager.PageCount,
+                StartPage = pager.StartPage,
+                PageIndex = pageIndex
+            };
+        }
+
+        public EventViewModel GetEventById(int id)
+        {
+            return _db.Events
+                .Include(x => x.Registrations)
+                .Where(x => x.Id == id)
+                .Select(x => new EventViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePath = x.ImagePath,
+                    RegistrationDeadline = x.RegistrationDeadline,
+                    EventStartDate = x.EventStartDate,
+                    EventEndDate = x.EventEndDate,
+                    RegisteredUsersCount = x.Registrations.Count,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
+                }).FirstOrDefault();
+        }
+
+        public bool AddEvent(EventCreateViewModel model)
+        {
+            try
+            {
+                var eventEntity = new Event
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    RegistrationDeadline = model.RegistrationDeadline,
+                    EventStartDate = model.EventStartDate,
+                    EventEndDate = model.EventEndDate
+                };
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    eventEntity.ImagePath = SaveEventImage(model.ImageFile);
+                }
+
+                _db.Events.Add(eventEntity);
+                _db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public EventEditViewModel GetEventForEdit(int id)
+        {
+            return _db.Events
+                .Where(x => x.Id == id)
+                .Select(x => new EventEditViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    RegistrationDeadline = x.RegistrationDeadline,
+                    EventStartDate = x.EventStartDate,
+                    EventEndDate = x.EventEndDate,
+                    CurrentImagePath = x.ImagePath
+                }).FirstOrDefault();
+        }
+
+        public bool UpdateEvent(EventEditViewModel model)
+        {
+            var eventEntity = _db.Events.FirstOrDefault(x => x.Id == model.Id);
+            if (eventEntity == null) return false;
+
+            eventEntity.Title = model.Title;
+            eventEntity.Description = model.Description;
+            eventEntity.RegistrationDeadline = model.RegistrationDeadline;
+            eventEntity.EventStartDate = model.EventStartDate;
+            eventEntity.EventEndDate = model.EventEndDate;
+
+            if (model.NewImageFile != null && model.NewImageFile.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(eventEntity.ImagePath))
+                {
+                    DeleteEventImage(eventEntity.ImagePath);
+                }
+                eventEntity.ImagePath = SaveEventImage(model.NewImageFile);
+            }
+
+            _db.Events.Update(eventEntity);
+            _db.SaveChanges();
+            return true;
+        }
+
+        public bool DeleteEvent(int id)
+        {
+            var eventEntity = _db.Events.Find(id);
+            if (eventEntity == null) return false;
+
+            eventEntity.IsDeleted = true;
+            _db.Events.Update(eventEntity);
+            _db.SaveChanges();
+            return true;
+        }
+
+        public EventDetailsViewModel GetEventDetails(int id)
+        {
+            return _db.Events
+                .Include(x => x.Registrations)
+                .ThenInclude(r => r.User)
+                .Where(x => x.Id == id)
+                .Select(x => new EventDetailsViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePath = x.ImagePath,
+                    RegistrationDeadline = MyDateTime.GetShamsiDateFromGregorian(x.RegistrationDeadline, false),
+                    EventStartDate = MyDateTime.GetShamsiDateFromGregorian(x.EventStartDate, false),
+                    EventEndDate = x.EventEndDate.HasValue ?
+                        MyDateTime.GetShamsiDateFromGregorian(x.EventEndDate.Value, false) : null,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false),
+                    Registrations = x.Registrations.Select(r => new EventRegistrationViewModel
+                    {
+                        RegistrationId = r.Id,
+                        UserId = r.User.UserId,
+                        UserFullName = r.User.firstName + " " + r.User.lastName,
+                        UserPhoneNumber = r.User.PhoneNumber,
+                        UserStudentNumber = r.User.studentNumber,
+                        RegistrationDate = MyDateTime.GetShamsiDateFromGregorian(r.RegistrationDate, true),
+                        IsApproved = r.IsApproved
+                    }).ToList()
+                }).FirstOrDefault();
+        }
+
+        public bool ApproveRegistration(int registrationId)
+        {
+            var registration = _db.EventRegistrations.Find(registrationId);
+            if (registration == null) return false;
+
+            registration.IsApproved = true;
+            _db.EventRegistrations.Update(registration);
+            _db.SaveChanges();
+            return true;
+        }
+
+        public bool RejectRegistration(int registrationId)
+        {
+            var registration = _db.EventRegistrations.Find(registrationId);
+            if (registration == null) return false;
+
+            _db.EventRegistrations.Remove(registration);
+            _db.SaveChanges();
+            return true;
+        }
+
+        public BaseFilterViewModel<EventRegistrationViewModel> GetEventRegistrations(int eventId, int pageIndex)
+        {
+            var registrations = _db.EventRegistrations
+                .Include(x => x.User)
+                .Where(x => x.EventId == eventId)
+                .OrderByDescending(x => x.RegistrationDate)
+                .ToList();
+
+            int take = 10;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, registrations.Count(), take, howManyPageShow);
+
+            var result = registrations.Select(r => new EventRegistrationViewModel
+            {
+                RegistrationId = r.Id,
+                UserId = r.User.UserId,
+                UserFullName = r.User.firstName + " " + r.User.lastName,
+                UserPhoneNumber = r.User.PhoneNumber,
+                UserStudentNumber = r.User.studentNumber,
+                RegistrationDate = MyDateTime.GetShamsiDateFromGregorian(r.RegistrationDate, true),
+                IsApproved = r.IsApproved
+            }).ToList();
+
+            var outPut = PagingHelper.Pagination<EventRegistrationViewModel>(result, pager);
+
+            return new BaseFilterViewModel<EventRegistrationViewModel>
+            {
+                EndPage = pager.EndPage,
+                Entities = outPut,
+                PageCount = pager.PageCount,
+                StartPage = pager.StartPage,
+                PageIndex = pageIndex
+            };
+        }
+
+        private string SaveEventImage(IFormFile imageFile)
+        {
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "events");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                imageFile.CopyTo(fileStream);
+            }
+
+            return "/images/events/" + uniqueFileName;
+        }
+
+        private void DeleteEventImage(string imagePath)
+        {
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePath.TrimStart('/'));
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
         }
 
     }

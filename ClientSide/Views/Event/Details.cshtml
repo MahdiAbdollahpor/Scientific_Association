@@ -1,0 +1,114 @@
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@using ServiceLayer.ViewModels.UserViewModels
+@model EventDetailsViewModel
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .justified-text {
+        text-align: justify;
+        text-justify: inter-word;
+        line-height: 2;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <article class="card shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="text-center p-3">
+                        <img src="@Model.ImagePath" alt="@Model.Title" class="img-fluid rounded" style="max-height: 400px; object-fit: cover;">
+                    </div>
+                }
+                <div class="card-body">
+                    <h1 class="card-title">@Model.Title</h1>
+                    <div class="d-flex justify-content-between text-muted mb-4">
+                        <div>
+                            <small>
+                                <i class="far fa-calendar-alt ml-1"></i>
+                                تاریخ انتشار: @Model.CreateDate
+                            </small>
+                        </div>
+                        <div>
+                            <small>
+                                <i class="fas fa-user-clock ml-1"></i>
+                                مهلت ثبت‌نام: @Model.RegistrationDeadline
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-text justified-text">
+                        @Html.Raw(Model.Description.Replace("\n", "<br />"))
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-bold mb-3">زمان برگزاری:</h4>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <i class="far fa-calendar-check ml-2"></i>
+                            @Model.EventStartDate
+                            @if (!string.IsNullOrEmpty(Model.EventEndDate))
+                            {
+                                <span>تا @Model.EventEndDate</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form asp-action="Register" method="post">
+                            <input type="hidden" name="eventId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-plus ml-2"></i>
+                                ثبت‌نام در همایش
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Identity" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Event", new { id = Model.Id })"
+                           class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt ml-2"></i>
+                            برای ثبت‌نام وارد شوید
+                        </a>
+                    }
+                    <a href="javascript:history.back()" class="btn btn-secondary mt-3">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        بازگشت
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            if ('@TempData["SuccessMessage"]' !== '') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفقیت',
+                    text: '@TempData["SuccessMessage"]',
+                    timer: 3000
+                });
+            }
+            if ('@TempData["ErrorMessage"]' !== '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: '@TempData["ErrorMessage"]'
+                });
+            }
+        });
+    </script>
+}

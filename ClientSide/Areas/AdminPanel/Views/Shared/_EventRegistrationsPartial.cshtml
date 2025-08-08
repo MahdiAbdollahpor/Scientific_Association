@@ -1,0 +1,81 @@
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@using ServiceLayer.ViewModels.BaseViewModels
+@model BaseFilterViewModel<EventRegistrationViewModel>
+
+<table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+        <tr>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام کاربر</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">شماره دانشجویی</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاریخ ثبت‌نام</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وضعیت</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
+        </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+        @foreach (var item in Model.Entities)
+        {
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@item.UserFullName</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.UserStudentNumber</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.RegistrationDate</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs rounded-full @(item.IsApproved ? "registration-status-approved" : "registration-status-pending")">
+                        @(item.IsApproved ? "تایید شده" : "در انتظار تایید")
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    @if (!item.IsApproved)
+                    {
+                        <button class="text-green-600 hover:text-green-800 approve-registration" data-id="@item.RegistrationId">
+                            <i class="fas fa-check"></i> تایید
+                        </button>
+                    }
+                    <button class="text-red-600 hover:text-red-800 reject-registration" data-id="@item.RegistrationId">
+                        <i class="fas fa-times"></i> رد
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.PageCount > 1)
+{
+    <div class="mt-4">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @if (Model.PageIndex > Model.StartPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:;" onclick="loadPage(@(Model.PageIndex - 1))" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+                }
+                @for (int i = Model.StartPage; i <= Model.EndPage; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link @(Model.PageIndex == i ? "active" : "")" href="javascript:;" onclick="loadPage(@i)">@i</a>
+                    </li>
+                }
+                @if (Model.PageIndex < Model.EndPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:;" onclick="loadPage(@(Model.PageIndex + 1))" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+<script>
+    function loadPage(pageId) {
+        $.get('/AdminPanel/Event/GetRegistrations', { eventId: @Model.Entities.FirstOrDefault()?.EventId ?? 0, pageId: pageId }, function (data) {
+            $('#registrations-container').html(data);
+        });
+    }
+</script>

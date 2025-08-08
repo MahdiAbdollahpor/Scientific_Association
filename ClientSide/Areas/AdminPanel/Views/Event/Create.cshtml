@@ -1,0 +1,86 @@
+﻿@using ServiceLayer.ViewModels.AdminViewModels
+@model EventCreateViewModel
+@{
+    ViewData["Title"] = "افزودن همایش جدید";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">افزودن همایش جدید</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" enctype="multipart/form-data" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label">عنوان همایش</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label">توضیحات همایش</label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="RegistrationDeadline" class="form-label">تاریخ پایان ثبت‌نام</label>
+                                    <input type="datetime-local" asp-for="RegistrationDeadline" class="form-control" />
+                                    <span asp-validation-for="RegistrationDeadline" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="EventStartDate" class="form-label">تاریخ شروع همایش</label>
+                                    <input type="datetime-local" asp-for="EventStartDate" class="form-control" />
+                                    <span asp-validation-for="EventStartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="EventEndDate" class="form-label">تاریخ پایان همایش (در صورت چند روزه بودن)</label>
+                            <input type="datetime-local" asp-for="EventEndDate" class="form-control" />
+                            <span asp-validation-for="EventEndDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="ImageFile" class="form-label">تصویر همایش</label>
+                            <input type="file" asp-for="ImageFile" class="form-control" />
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">ذخیره همایش</button>
+                            <a asp-action="Index" class="btn btn-secondary">بازگشت</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            if ('@TempData["SuccessMessage"]' !== '') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفقیت',
+                    text: '@TempData["SuccessMessage"]',
+                    timer: 3000
+                });
+            }
+            if ('@TempData["ErrorMessage"]' !== '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: '@TempData["ErrorMessage"]'
+                });
+            }
+        });
+    </script>
+}
