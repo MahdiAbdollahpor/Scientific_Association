@@ -133,6 +133,30 @@
                 });
             });
 
+            $(function () {
+                // نمایش پیام‌های موفقیت و خطا
+                var successMessage = '@TempData["SuccessMessage"]';
+                var errorMessage = '@TempData["ErrorMessage"]';
+
+                if (successMessage) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفقیت',
+                        text: successMessage,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
+                }
+
+                if (errorMessage) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطا',
+                        text: errorMessage,
+                    });
+                }
+
             // مدیریت رویداد کلیک برای حذف خبر
             $(document).on('click', '.delete-btn[data-type="news"]', function () {
                 var newsId = $(this).data('id');

@@ -1,6 +1,7 @@
 using ClientSide.Models;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Services.Interfaces;
+using ServiceLayer.ViewModels.UserViewModels;
 using System.Diagnostics;
 
 namespace ClientSide.Controllers
@@ -18,8 +19,12 @@ namespace ClientSide.Controllers
 
         public IActionResult Index()
         {
-            var latestNews = _userService.GetLatestNews(3);
-            return View(latestNews);
+            var model = new HomePageViewModel
+            {
+                LatestNews = _userService.GetLatestNews(3),
+                UpcomingEvents = _userService.GetUpcomingEvents(3)
+            };
+            return View(model);
         }
 
         public IActionResult Privacy()

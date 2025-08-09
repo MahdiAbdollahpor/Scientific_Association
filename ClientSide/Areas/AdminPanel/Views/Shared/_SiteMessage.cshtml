@@ -1,0 +1,99 @@
+﻿@if (TempData["success"] != null)
+{
+    <script>
+        let message = $("#message1").val();
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast',
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        })
+
+
+        Toast.fire({
+            icon: 'success',
+            title: message
+        })
+    </script>
+}
+
+@if (TempData["error"] != null)
+{
+    <script>
+        let message = $("#message2").val();
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast',
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        })
+
+
+        Toast.fire({
+            icon: 'error',
+            title: message
+        })
+    </script>
+}
+
+@if (TempData["info"] != null)
+{
+    <script>
+        let message = $("#message3").val();
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast',
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        })
+
+
+        Toast.fire({
+            icon: 'info',
+            title: message
+        })
+    </script>
+}
+
+@if (TempData["warning"] != null)
+{
+    <script>
+        let message = $("#message4").val();
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast',
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        })
+
+
+        Toast.fire({
+            icon: 'warning',
+            title: message
+        })
+    </script>
+}

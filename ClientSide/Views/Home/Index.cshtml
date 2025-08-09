@@ -1,5 +1,7 @@
-﻿@using ServiceLayer.ViewModels.AdminViewModels
-@model List<NewsViewModel>
+﻿
+@using ServiceLayer.PublicClasses
+@using ServiceLayer.ViewModels.UserViewModels
+@model HomePageViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -35,7 +37,7 @@
                 </a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach (var news in Model)
+                @foreach (var news in Model.LatestNews)
                 {
                     <div class="bg-white rounded-xl shadow-md overflow-hidden news-card transition-all duration-300">
                         <div class="overflow-hidden">
@@ -59,72 +61,52 @@
             </div>
         </section>
 
-       
+
 
         <!-- Events Section -->
         <section class="mb-12">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 border-r-4 border-blue-500 pr-3">رویدادهای آینده</h2>
-                <a href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                <a asp-area="" asp-controller="Event" asp-action="Index" class="text-blue-600 hover:text-blue-800 flex items-center">
                     مشاهده همه رویدادها
                     <i class="fas fa-arrow-left mr-2"></i>
                 </a>
             </div>
 
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Event 1 -->
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all">
-                        <div class="flex items-center mb-3">
-                            <div class="bg-blue-100 text-blue-800 rounded-lg p-3 mr-3">
-                                <i class="fas fa-microscope text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800">سمینار تخصصی ویروس‌شناسی</h3>
-                                <p class="text-sm text-gray-500">تالار شهید چمران</p>
-                            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach (var eventItem in Model.UpcomingEvents)
+                {
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden event-card transition-all duration-300">
+                        <div class="overflow-hidden">
+                            <img src="@(eventItem.ImagePath ?? "/images/no-image.jpg")"
+                                 alt="@eventItem.Title" class="w-full h-48 object-cover">
                         </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600"><i class="far fa-calendar-alt ml-1"></i> ۵ تیر ۱۴۰۳</span>
-                            <a href="#" class="text-blue-600">جزئیات بیشتر</a>
-                        </div>
-                    </div>
-
-                    <!-- Event 2 -->
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all">
-                        <div class="flex items-center mb-3">
-                            <div class="bg-purple-100 text-purple-800 rounded-lg p-3 mr-3">
-                                <i class="fas fa-flask text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800">کارگاه عملی کشت میکروبی</h3>
-                                <p class="text-sm text-gray-500">آزمایشگاه مرکزی</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600"><i class="far fa-calendar-alt ml-1"></i> ۱۲ تیر ۱۴۰۳</span>
-                            <a href="#" class="text-blue-600">جزئیات بیشتر</a>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">@eventItem.Title</h3>
+                            <p class="text-gray-600 mb-2">
+                                <i class="far fa-calendar-alt ml-1"></i>
+                                شروع: @MyDateTime.GetShamsiDateFromGregorian(eventItem.EventStartDate, false)
+                            </p>
+                            @if (eventItem.EventEndDate.HasValue)
+                            {
+                                <p class="text-gray-600 mb-2">
+                                    <i class="far fa-calendar-alt ml-1"></i>
+                                    پایان: @MyDateTime.GetShamsiDateFromGregorian(eventItem.EventEndDate.Value, false)
+                                </p>
+                            }
+                            <p class="text-gray-600 mb-4">
+                                مهلت ثبت‌نام: @MyDateTime.GetShamsiDateFromGregorian(eventItem.RegistrationDeadline, false)
+                            </p>
+                            <a asp-area="" asp-controller="Event" asp-action="Details" asp-route-id="@eventItem.Id"
+                               class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                جزئیات رویداد
+                                <i class="fas fa-arrow-left mr-2"></i>
+                            </a>
                         </div>
                     </div>
-
-                    <!-- Event 3 -->
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-all">
-                        <div class="flex items-center mb-3">
-                            <div class="bg-green-100 text-green-800 rounded-lg p-3 mr-3">
-                                <i class="fas fa-users text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-gray-800">جلسه عمومی انجمن</h3>
-                                <p class="text-sm text-gray-500">سالن اجتماعات</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600"><i class="far fa-calendar-alt ml-1"></i> ۲۰ تیر ۱۴۰۳</span>
-                            <a href="#" class="text-blue-600">جزئیات بیشتر</a>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </section>
+        
     </main>
 </div>

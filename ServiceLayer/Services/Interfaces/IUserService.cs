@@ -16,6 +16,7 @@ namespace ServiceLayer.Services.Interfaces
         List<NewsViewModel> GetLatestNews(int count);
 
         // متدهای جدید برای مدیریت همایش‌ها
+        BaseFilterViewModel<EventViewModel> GetAllEventsForUser(int pageIndex, string search);
         List<EventViewModel> GetUpcomingEvents(int count);
         EventDetailsViewModel GetEventDetails(int id);
         bool RegisterForEvent(int eventId, string phoneNumber);

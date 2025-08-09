@@ -87,6 +87,44 @@ namespace ServiceLayer.Services
 
 
         // evant sevices
+
+
+        public BaseFilterViewModel<EventViewModel> GetAllEventsForUser(int pageIndex, string search)
+        {
+            var newsList = _db.Events.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
+            int take = 10;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
+            if (!string.IsNullOrEmpty(search))
+            {
+                newsList = newsList.Where(x =>
+                    x.Title.Contains(search) ||
+                    x.Description.Contains(search)).ToList();
+            }
+            var result = newsList.Select(x => new EventViewModel
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Description = x.Description,
+                ImagePath = x.ImagePath,
+                RegistrationDeadline = x.RegistrationDeadline,
+                EventStartDate = x.EventStartDate,
+                EventEndDate = x.EventEndDate,
+                CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
+
+            }).ToList();
+            var outPut = PagingHelper.Pagination<EventViewModel>(result, pager);
+            return new BaseFilterViewModel<EventViewModel>
+            {
+                EndPage = pager.EndPage,
+                Entities = outPut,
+                PageCount = pager.PageCount,
+                StartPage = pager.StartPage,
+                PageIndex = pageIndex
+            };
+        }
+
+
         public List<EventViewModel> GetUpcomingEvents(int count)
         {
             return _db.Events

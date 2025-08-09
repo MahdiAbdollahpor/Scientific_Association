@@ -12,10 +12,10 @@ namespace ClientSide.Controllers
             _userService = userService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int pageId = 1, string search = "")
         {
-            var upcomingEvents = _userService.GetUpcomingEvents(6);
-            return View(upcomingEvents);
+            var EventsList = _userService.GetAllEventsForUser(pageId, search);
+            return View(EventsList);
         }
 
         [HttpGet]
