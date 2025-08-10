@@ -1,5 +1,4 @@
-﻿using iTextSharp.text.pdf;
-using iTextSharp.text;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
@@ -74,77 +73,257 @@ namespace ClientSide.Areas.AdminPanel.Controllers
 
 
 
-        public IActionResult PrintUserCard(int id)
+        [HttpGet]
+        public IActionResult GetUserCardHtml(int id)
         {
             var user = _adminService.GetUserById(id);
-            if (user == null)
-                return NotFound();
+            if (user == null) return NotFound();
+
+            var expiryDate = DateTime.Now.AddYears(2).ToString("yyyy/MM/dd");
 
             var htmlContent = $@"
-        <!DOCTYPE html>
-        <html dir='rtl'>
-        <head>
-            <meta charset='UTF-8'>
-        </head>
-        <body style='font-family:B Nazanin,Tahoma,sans-serif;background-color:#f8f9fa;padding:40px 20px;margin:0;'>
-            <div style='background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);max-width:480px;margin:0 auto;overflow:hidden;'>
-                <!-- هدر کارت -->
-                <div style='background:linear-gradient(135deg,#2563eb 0%,#1e40af 100%);color:white;padding:24px;text-align:center;margin-bottom:16px;'>
-                    <h2 style='margin:0;font-size:22px;font-weight:700;'>کارت شناسایی کاربر</h2>
+    <!DOCTYPE html>
+    <html lang='fa' dir='rtl'>
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>کارت شناسایی کاربر</title>
+        <style>
+            @font-face {{
+            font-family: 'IRANSans';
+            src: url('fonts/IRANSansWeb.ttf') format('truetype');
+        }}
+        
+        body {{
+            font-family: 'IRANSans', sans-serif;
+            background-color: #e8f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }}
+        
+ 
+        
+        .microbiology-card {{
+            width: 360px;
+            height: 230px;
+            background: linear-gradient(to bottom right, #005b96, #003d66);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 91, 150, 0.3);
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }}
+        
+        .card-pattern {{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns=""http://www.w3.org/2000/svg"" width=""100"" height=""100"" viewBox=""0 0 100 100""><circle cx=""20"" cy=""20"" r=""2"" fill=""rgba(255,255,255,0.05)""/><circle cx=""50"" cy=""50"" r=""3"" fill=""rgba(255,255,255,0.05)""/><circle cx=""80"" cy=""30"" r=""1.5"" fill=""rgba(255,255,255,0.05)""/><circle cx=""30"" cy=""70"" r=""2.5"" fill=""rgba(255,255,255,0.05)""/><circle cx=""70"" cy=""80"" r=""1"" fill=""rgba(255,255,255,0.05)""/></svg>');
+            opacity: 0.6;
+        }}
+        
+        .card-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }}
+        
+        .logo {{
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }}
+        
+        .logo-icon {{
+            margin-left: 8px;
+            font-size: 22px;
+        }}
+        
+        .card-type {{
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            backdrop-filter: blur(5px);
+        }}
+        
+        .card-body {{
+            display: flex;
+            position: relative;
+            z-index: 2;
+        }}
+        
+        .photo-container {{
+            width: 90px;
+            height: 120px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }}
+        
+        .photo-placeholder {{
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+        }}
+        
+        .member-info {{
+            flex: 1;
+        }}
+        
+        .info-row {{
+            margin-bottom: 12px;
+        }}
+        
+        .label {{
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+            color: #a8d0e6;
+        }}
+        
+        .value {{
+            font-size: 14px;
+            font-weight: bold;
+        }}
+        
+        .card-footer {{
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            opacity: 0.7;
+            z-index: 2;
+        }}
+        
+        .micro-icon {{
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 120px;
+            opacity: 0.08;
+            z-index: 1;
+        }}
+        
+        .bacteria-shape {{
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(168, 208, 230, 0.1);
+            top: -30px;
+            left: -30px;
+        }}
+        
+        .dna-pattern {{
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            bottom: 40px;
+            left: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                transparent 20%, 
+                rgba(255,255,255,0.2) 21%, 
+                rgba(255,255,255,0.2) 22%, 
+                transparent 23%, 
+                transparent 43%, 
+                rgba(255,255,255,0.2) 44%, 
+                rgba(255,255,255,0.2) 45%, 
+                transparent 46%, 
+                transparent 66%, 
+                rgba(255,255,255,0.2) 67%, 
+                rgba(255,255,255,0.2) 68%, 
+                transparent 69%, 
+                transparent 89%, 
+                rgba(255,255,255,0.2) 90%, 
+                rgba(255,255,255,0.2) 91%, 
+                transparent 92%, 
+                transparent 100%);
+            opacity: 0.3;
+        }}
+        </style>
+        <script>
+            window.onload = function() {{
+                window.print();
+                setTimeout(function() {{
+                    window.close();
+                }}, 1000);
+            }};
+        </script>
+    </head>
+    <body>
+        <div class='microbiology-card'>
+            <div class='card-pattern'></div>
+            <div class='bacteria-shape'></div>
+            <div class='dna-pattern'></div>
+            <div class='micro-icon'>🦠</div>
+            
+            <div class='card-header'>
+                <div class='logo'>
+                    <span>انجمن میکروبیولوژی</span>
+                    <span class='logo-icon'>🧫</span>
                 </div>
-
-                <!-- محتوای کارت -->
-                <div style='padding:0 24px 24px;'>
-                    <div style='display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f1f1f1;margin:0 0 8px 0;'>
-                        <span style='color:#4b5563;font-weight:600;margin-left:12px;font-size:15px;'>نام کامل:</span>
-                        <span style='color:#1f2937;font-weight:500;font-size:15px;text-align:left;direction:ltr;'>{user.firstName} {user.lastName}</span>
+                <div class='card-type'>عضو رسمی</div>
+            </div>
+            
+            <div class='card-body'>
+                <div class='photo-container'>
+                    <div class='photo-placeholder'>
+                        تصویر 3×4
                     </div>
-
-                    <div style='display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f1f1f1;margin:0 0 8px 0;'>
-                        <span style='color:#4b5563;font-weight:600;margin-left:12px;font-size:15px;'>کد ملی:</span>
-                        <span style='color:#1f2937;font-weight:500;font-size:15px;text-align:left;direction:rtl;unicode-bidi:embed;'>{user.nationalCode}</span>
+                </div>
+                
+                <div class='member-info'>
+                    <div class='info-row'>
+                        <div class='label'>نام و نام خانوادگی</div>
+                        <div class='value'>{user.firstName} {user.lastName}</div>
                     </div>
-
-                    <div style='display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f1f1f1;margin:0 0 8px 0;'>
-                        <span style='color:#4b5563;font-weight:600;margin-left:12px;font-size:15px;'>شماره دانشجویی:</span>
-                        <span style='color:#1f2937;font-weight:500;font-size:15px;text-align:left;direction:rtl;unicode-bidi:embed;'>{user.studentNumber}</span>
+                    
+                    <div class='info-row'>
+                        <div class='label'>کد دانشجویی/پرسنلی</div>
+                        <div class='value'>{user.studentNumber}</div>
                     </div>
-
-                    <div style='display:flex;justify-content:space-between;align-items:center;padding:14px 0;margin:0;'>
-                        <span style='color:#4b5563;font-weight:600;margin-left:12px;font-size:15px;'>تاریخ ثبت‌نام:</span>
-                        <span style='color:#1f2937;font-weight:500;font-size:15px;text-align:left;direction:rtl;unicode-bidi:embed;'>{user.CreateDate}</span>
+                    
+                    <div class='info-row'>
+                        <div class='label'>تاریخ عضویت</div>
+                        <div class='value'>{user.CreateDate}</div>
                     </div>
                 </div>
             </div>
-        </body>
-        </html>";
+            
+            <div class='card-footer'>
+                <div>این کارت مالکیت انحصاری عضو است</div>
+                <div>اعتبار: {DateTime.Now.AddYears(2).ToString("yyyy/MM/dd")}</div>
+            </div>
+        </div>
+    </body>
+    </html>";
 
-            var doc = new HtmlToPdfDocument()
-            {
-                GlobalSettings = {
-                ColorMode = ColorMode.Color,
-                PaperSize = DinkToPdf.PaperKind.A4,
-                Margins = new MarginSettings { Top = 10, Bottom = 10, Left = 10, Right = 10 }
-            },
-                Objects = {
-                new ObjectSettings()
-                {
-                    HtmlContent = htmlContent,
-                    WebSettings = {
-                        DefaultEncoding = "utf-8",
-                        EnableJavascript = false, // غیرفعال کردن JavaScript
-                        LoadImages = true
-                    }
-                }
-            }
-            };
-
-            var pdfBytes = _pdfConverter.Convert(doc);
-            return File(pdfBytes, "application/pdf", $"UserCard_{user.firstName}_{user.lastName}.pdf");
+            return Content(htmlContent, "text/html");
         }
-
-
-
 
 
 

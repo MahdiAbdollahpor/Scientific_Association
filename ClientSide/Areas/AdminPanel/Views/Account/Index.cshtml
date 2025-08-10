@@ -71,10 +71,15 @@
                                     </button>
 
                                     <!-- دکمه چاپ -->
-                                    <a href="@Url.Action("PrintUserCard", "Account", new { area = "AdminPanel", id = item.Id })"
+                                   @*  <a href="@Url.Action("PrintUserCard", "Account", new { area = "AdminPanel", id = item.Id })"
                                        class="text-blue-600 hover:text-blue-900 ml-2">
                                         <i class="fas fa-print"></i>
-                                    </a>
+                                    </a> *@
+
+                                    <button onclick="printUserCard(@item.Id)"
+                                            class="text-blue-600 hover:text-blue-900 ml-2">
+                                        <i class="fas fa-print"></i>
+                                    </button>
                                   
                                 </td>
                             </tr>
@@ -137,7 +142,25 @@
 <script>
  
 
+    function printUserCard(userId) {
+        // باز کردن پنجره جدید با اندازه مناسب
+        const printWindow = window.open(
+            `/AdminPanel/Account/GetUserCardHtml?id=${userId}`,
+            '_blank',
+            'width=600,height=400,toolbar=0,location=0,menubar=0'
+        );
 
+        // اگر پنجره بسته شد، پیام مناسب نمایش دهید
+        printWindow.onbeforeunload = function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'چاپ انجام شد',
+                text: 'کارت کاربر با موفقیت چاپ شد',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        };
+    }
 
 
 

@@ -240,3 +240,22 @@ body {
         }
 
 
+@media print {
+    body {
+        background: white !important;
+        height: auto !important;
+        padding: 0 !important;
+    }
+
+    .microbiology-card {
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        height: auto !important;
+        page-break-after: always;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
