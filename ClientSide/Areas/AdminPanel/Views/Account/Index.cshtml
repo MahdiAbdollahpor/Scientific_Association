@@ -3,33 +3,33 @@
 @using ServiceLayer.ViewModels.BaseViewModels
 @model BaseFilterViewModel<ListUserViewModel>
 @inject IAdminService _adminService
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "مدیریت کاربران";
     Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
 }
 
 <!-- Content area -->
-
 <div class="flex-1 overflow-auto p-6">
     <div class="content-area" id="users-content">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold text-gray-800">مدیریت کاربران</h2>
 
-            <!-- Search Box -->
-            <div class="relative">
-                <form method="get" asp-action="UsersList" id="formFilter">
-                    <input hidden value="@Model.PageIndex" id="pageId" name="pageId" />
-                    <input type="text" id="user-search" placeholder="جستجوی کاربر..."
-                           class="pr-10 pl-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
-                </form>
-               
-            </div>
-
-          
+            <!-- فرم جستجو -->
+            <form method="get" asp-action="Index" asp-controller="Account" asp-area="AdminPanel" class="relative">
+                <input type="hidden" name="pageId" value="1" />
+                <input type="text"
+                       name="search"
+                       value="@(Context.Request.Query["search"])"
+                       placeholder="جستجوی کاربر..."
+                       class="pr-10 pl-4 py-2 w-64 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+            </form>
         </div>
+
+        <!-- جدول کاربران -->
         <div class="bg-white shadow rounded-lg overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -47,11 +47,9 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="users-table-body">
-
                         @{
-                            int counter = 1;
+                            int counter = (Model.PageIndex - 1) * 10 + 1; // محاسبه ردیف با توجه به صفحه
                         }
-
                         @foreach (var item in Model.Entities)
                         {
                             <tr>
@@ -62,95 +60,90 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.nationalCode</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.studentNumber</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.CreateDate</td>
-                                <td>@(item.IsDeleted == true ? "غیر فعال" : " فعال")</td>
-
-                                <td>
-                                    <button id="edit-user-btn" class="text-yellow-600 hover:text-yellow-900 ml-2 edit-user-btn"
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @(item.IsDeleted ? "غیرفعال" : "فعال")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-yellow-600 hover:text-yellow-900 ml-3 edit-user-btn"
                                             data-user-id="@item.Id">
                                         <i class="fas fa-edit"></i>
                                     </button>
-
-                                    <!-- دکمه چاپ -->
-                                   @*  <a href="@Url.Action("PrintUserCard", "Account", new { area = "AdminPanel", id = item.Id })"
-                                       class="text-blue-600 hover:text-blue-900 ml-2">
-                                        <i class="fas fa-print"></i>
-                                    </a> *@
-
                                     <button onclick="printUserCard(@item.Id)"
-                                            class="text-blue-600 hover:text-blue-900 ml-2">
+                                            class="text-blue-600 hover:text-blue-900">
                                         <i class="fas fa-print"></i>
                                     </button>
-                                  
                                 </td>
                             </tr>
                             counter++;
                         }
-
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
-    <div class="card-footer">
-        @if (Model.PageCount > 1)
+
+
+        <!-- نمایش پیام زمانی که کاربری وجود ندارد -->
+        @if (!Model.Entities.Any())
         {
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    @if (Model.PageIndex > Model.StartPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:;" aria-label="Previous">
-                                <span aria-hidden="true">«</span>
-                            </a>
-                        </li>
-                    }
-                    @for (int i = Model.StartPage; i <= Model.EndPage; i++)
-                    {
-                        <li class="page-item">
-                            <a class="page-link paginations @(Model.PageIndex == i ? "active" : "")" href="javascript:;">@i</a>
-                        </li>
-                    }
-
-                    @if (Model.PageIndex < Model.EndPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:;" aria-label="Next">
-                                <span aria-hidden="true">»</span>
-                            </a>
-                        </li>
-                    }
-
-                </ul>
-            </nav>
+            <div class="bg-white shadow rounded-lg overflow-hidden mt-4">
+                <div class="p-4 text-center text-gray-600">
+                    هیچ کاربری یافت نشد.
+                </div>
+            </div>
         }
 
-    </div>
 
+        <!-- صفحه‌بندی -->
+        @if (Model.PageCount > 1)
+        {
+            <div class="mt-6 flex justify-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination flex space-x-1 space-x-reverse">
+                        <!-- دکمه قبلی -->
+                        @if (Model.PageIndex > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link px-3 py-2 border rounded text-gray-700 hover:bg-indigo-50"
+                                   href="@Url.Action("Index", "Account", new { area = "AdminPanel", pageId = Model.PageIndex - 1, search = Context.Request.Query["search"] })">
+                                    « قبلی
+                                </a>
+                            </li>
+                        }
 
-  
-    </div>
+                        <!-- صفحات -->
+                        @for (int i = Model.StartPage; i <= Model.EndPage; i++)
+                        {
+                            <li class="page-item">
+                                <a class="page-link px-3 py-2 border rounded @(i == Model.PageIndex ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50")"
+                                   href="@Url.Action("Index", "Account", new { area = "AdminPanel", pageId = i, search = Context.Request.Query["search"] })">
+                                    @i
+                                </a>
+                            </li>
+                        }
 
+                        <!-- دکمه بعدی -->
+                        @if (Model.PageIndex < Model.PageCount)
+                        {
+                            <li class="page-item">
+                                <a class="page-link px-3 py-2 border rounded text-gray-700 hover:bg-indigo-50"
+                                   href="@Url.Action("Index", "Account", new { area = "AdminPanel", pageId = Model.PageIndex + 1, search = Context.Request.Query["search"] })">
+                                    بعدی »
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
 
-
-
-
-
-
-
-
-
+<!-- اسکریپت‌ها -->
 <script>
- 
-
     function printUserCard(userId) {
-        // باز کردن پنجره جدید با اندازه مناسب
         const printWindow = window.open(
             `/AdminPanel/Account/GetUserCardHtml?id=${userId}`,
             '_blank',
             'width=600,height=400,toolbar=0,location=0,menubar=0'
         );
-
-        // اگر پنجره بسته شد، پیام مناسب نمایش دهید
         printWindow.onbeforeunload = function () {
             Swal.fire({
                 icon: 'success',
@@ -162,11 +155,8 @@
         };
     }
 
-
-
-
+    // مدیریت ویرایش کاربر
     document.addEventListener('DOMContentLoaded', function () {
-        //مدیریت رویداد کلیک برای ویرایش کاربر
         document.addEventListener('click', function (e) {
             const editBtn = e.target.closest('.edit-user-btn');
             if (editBtn) {
@@ -176,64 +166,58 @@
             }
         });
 
-    function showEditUserModal(userId) {
-        if (!userId || isNaN(userId)) {
-            console.error("شناسه نامعتبر است");
-            return;
+        function showEditUserModal(userId) {
+            if (!userId || isNaN(userId)) {
+                console.error("شناسه نامعتبر است");
+                return;
+            }
+
+            fetch(`/AdminPanel/Account/EditUser/${userId}`)
+                .then(response => response.ok ? response.text() : Promise.reject("خطا در دریافت اطلاعات کاربر"))
+                .then(html => {
+                    const modalContainer = document.createElement('div');
+                    modalContainer.innerHTML = html;
+                    document.body.appendChild(modalContainer);
+                    document.getElementById('user-modal-overlay').classList.add('active');
+                    document.getElementById('user-modal').classList.add('active');
+                    setupModalEvents();
+                })
+                .catch(error => console.error('Error:', error));
         }
 
-        fetch(`/AdminPanel/Account/EditUser/${userId}`)
-            .then(response => response.ok ? response.text() : Promise.reject("خطا در دریافت اطلاعات کاربر"))
-            .then(html => {
-                const modalContainer = document.createElement('div');
-                modalContainer.innerHTML = html;
-                document.body.appendChild(modalContainer);
-
-                document.getElementById('user-modal-overlay').classList.add('active');
-                document.getElementById('user-modal').classList.add('active');
-                setupModalEvents();
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    function setupModalEvents() {
-        document.querySelectorAll('.close-user-modal').forEach(btn => {
-            btn.addEventListener('click', closeModal);
-        });
-
-        const userForm = document.getElementById('user-form');
-        if (userForm) {
-            userForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                submitUserForm(this);
+        function setupModalEvents() {
+            document.querySelectorAll('.close-user-modal').forEach(btn => {
+                btn.addEventListener('click', closeModal);
             });
+
+            const userForm = document.getElementById('user-form');
+            if (userForm) {
+                userForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    submitUserForm(this);
+                });
+            }
         }
-    }
 
-    function closeModal() {
-        document.getElementById('user-modal-overlay').classList.remove('active');
-        document.getElementById('user-modal').classList.remove('active');
-
-        document.getElementById('user-modal')?.remove();
-        document.getElementById('user-modal-overlay')?.remove();
-    }
+        function closeModal() {
+            const overlay = document.getElementById('user-modal-overlay');
+            const modal = document.getElementById('user-modal');
+            if (overlay) overlay.classList.remove('active');
+            if (modal) modal.classList.remove('active');
+            setTimeout(() => {
+                overlay?.remove();
+                modal?.remove();
+            }, 300);
+        }
 
         function submitUserForm(form) {
-           // نمایش Loader (اختیاری)
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال پردازش...';
             submitBtn.disabled = true;
 
-          //  جمع‌آوری داده‌های فرم
             const formData = new FormData(form);
 
-          //  تبدیل FormData به شیء ساده (برای خطایابی)
-            const formDataObj = {};
-            formData.forEach((value, key) => formDataObj[key] = value);
-            console.log('داده‌های ارسالی:', formDataObj);
-
-          //  ارسال با AJAX
             $.ajax({
                 url: form.action,
                 type: 'POST',
@@ -245,7 +229,6 @@
                 },
                 success: function (data) {
                     if (data.success) {
-                       // نمایش پیام موفقیت
                         Swal.fire({
                             icon: 'success',
                             title: 'موفق',
@@ -256,7 +239,6 @@
                             window.location.reload();
                         });
                     } else {
-                       // نمایش خطاهای اعتبارسنجی
                         showValidationErrors(data.errors || [data.message]);
                     }
                 },
@@ -265,64 +247,34 @@
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
                     }
-                    Swal.fire({
+                    Swal.fire({ 
                         icon: 'error',
                         title: 'خطا',
                         text: errorMessage
                     });
                 },
                 complete: function () {
-                   // بازگرداندن دکمه به حالت اول
                     submitBtn.innerHTML = originalBtnText;
                     submitBtn.disabled = false;
                 }
             });
         }
 
-       // تابع نمایش خطاهای اعتبارسنجی
         function showValidationErrors(errors) {
-            let errorHtml = '<ul>';
+            let errorHtml = '<ul class="text-right">';
             errors.forEach(error => {
                 errorHtml += `<li>${error}</li>`;
             });
             errorHtml += '</ul>';
-
             Swal.fire({
                 icon: 'error',
                 title: 'خطا در اعتبارسنجی',
                 html: errorHtml
             });
         }
-
-        // جستجوی زنده
-        const searchInput = document.getElementById('user-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', debounce(function () {
-                const searchValue = this.value.trim().toLowerCase();
-                document.querySelectorAll('#users-table-body tr').forEach(row => {
-                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                    row.style.display = name.includes(searchValue) ? '' : 'none';
-                });
-            }, 300));
-        }
     });
-
-    // تابع debounce برای بهینه‌سازی جستجو
-    function debounce(func, wait) {
-        let timeout;
-        return function () {
-            const context = this, args = arguments;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(context, args), wait);
-        };
-    }
-
-  
-
-
 </script>
 
-
+<!-- کتابخانه‌ها -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

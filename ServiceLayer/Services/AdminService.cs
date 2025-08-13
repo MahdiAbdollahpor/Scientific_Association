@@ -20,43 +20,67 @@ namespace ServiceLayer.Services
         }
 
 
-        public BaseFilterViewModel<ListUserViewModel> GetAllUserForAdmin(int pageIndex, string search)
+        public BaseFilterViewModel<ListUserViewModel> GetAllUserForAdmin(int pageIndex, string search = "")
         {
-            var userList = _db.Users.Where(x => x.IsDeleted == false).OrderByDescending(x => x.RegisterTime).ToList();
-            int take = 10;
-            int howManyPageShow = 2;
-            var pager = PagingHelper.Pager(pageIndex, userList.Count(), take, howManyPageShow);
+            var query = _db.Users.AsNoTracking().Where(x => x.IsDeleted == false);
 
-            if (search != null)
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                userList = userList.Where(x => x.PhoneNumber.Contains(search) || x.firstName.Contains(search) || x.lastName.Contains(search) || x.nationalCode.Contains(search) || x.studentNumber.Contains(search)).ToList();
+                query = query.Where(x =>
+                    x.PhoneNumber.Contains(search) ||
+                    x.firstName.Contains(search) ||
+                    x.lastName.Contains(search) ||
+                    x.nationalCode.Contains(search) ||
+                    x.studentNumber.Contains(search));
             }
 
-            var resault = userList.Select(x => new ListUserViewModel
-            {
-                CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.RegisterTime, false),
-                firstName = x.firstName,
-                lastName = x.lastName,
-                PhoneNumber = x.PhoneNumber,
-                nationalCode = x.nationalCode,
-                studentNumber = x.studentNumber,
-                IsDeleted = x.IsDeleted,
-                Id = x.UserId
-            }).ToList();
+            int totalEntities = query.Count();
 
-            var outPut = PagingHelper.Pagination<ListUserViewModel>(resault, pager);
-
-            BaseFilterViewModel<ListUserViewModel> res = new BaseFilterViewModel<ListUserViewModel>
+            // اگر هیچ رکوردی وجود ندارد، یک مدل خالی برگردانید
+            if (totalEntities == 0)
             {
-                EndPage = pager.EndPage,
-                Entities = outPut,
+                return new BaseFilterViewModel<ListUserViewModel>
+                {
+                    Entities = new List<ListUserViewModel>(),
+                    PageIndex = 1,
+                    PageCount = 0,
+                    StartPage = 1,
+                    EndPage = 1
+                };
+            }
+
+            int take = 10;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, totalEntities, take, howManyPageShow);
+
+            var pagedData = query
+                .OrderByDescending(x => x.RegisterTime)
+                .Skip(pager.Skip)
+                .Take(pager.Take)
+                .Select(x => new ListUserViewModel
+                {
+                    Id = x.UserId,
+                    firstName = x.firstName,
+                    lastName = x.lastName,
+                    PhoneNumber = x.PhoneNumber,
+                    nationalCode = x.nationalCode,
+                    studentNumber = x.studentNumber,
+                    IsDeleted = x.IsDeleted,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.RegisterTime, false)
+                })
+                .ToList();
+
+            return new BaseFilterViewModel<ListUserViewModel>
+            {
+                Entities = pagedData,
+                PageIndex = pageIndex,
                 PageCount = pager.PageCount,
                 StartPage = pager.StartPage,
-                PageIndex = pageIndex
+                EndPage = pager.EndPage
             };
-
-            return res;
         }
+
+
 
         public ListUserViewModel GetUserById(int id)
         {

@@ -1,19 +1,8 @@
-﻿
+﻿using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.AdminViewModels;
-using Grpc.Core;
-using DinkToPdf.Contracts;
-using DinkToPdf;
-using Mono.TextTemplating;
-using System.Drawing.Printing;
-using System.Drawing;
-using PuppeteerSharp.Media;
-using PuppeteerSharp;
-using static System.Net.Mime.MediaTypeNames;
-using Rotativa.AspNetCore;
-using Rotativa.AspNetCore.Options;
 
 namespace ClientSide.Areas.AdminPanel.Controllers
 {
