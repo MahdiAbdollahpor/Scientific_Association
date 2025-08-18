@@ -24,32 +24,56 @@ namespace ServiceLayer.Services
         }
         public BaseFilterViewModel<NewsViewModel> GetAllNewsForUser(int pageIndex, string search)
         {
-            var newsList = _db.News.Include(x => x.Images).Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
-            int take = 10;
-            int howManyPageShow = 2;
-            var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
-            if (!string.IsNullOrEmpty(search))
+
+            var query = _db.News.Include(x => x.Images).Where(x => !x.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                newsList = newsList.Where(x =>
-                    x.Title.Contains(search) ||
-                    x.Description.Contains(search)).ToList();
+                query = query.Where(x => x.Title.Contains(search) ||
+                                       x.Description.Contains(search));
             }
-            var result = newsList.Select(x => new NewsViewModel
+
+            int totalEntities = query.Count();
+
+            if (totalEntities == 0)
             {
-                Id = x.Id,
-                Title = x.Title,
-                Description = x.Description,
-                ImagePaths = x.Images.Select(i => i.ImagePath).ToList()
-            }).ToList();
-            var outPut = PagingHelper.Pagination<NewsViewModel>(result, pager);
+                return new BaseFilterViewModel<NewsViewModel>
+                {
+                    Entities = new List<NewsViewModel>(),
+                    PageIndex = 1,
+                    PageCount = 0,
+                    StartPage = 1,
+                    EndPage = 1
+                };
+            }
+
+            int take = 3;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, totalEntities, take, howManyPageShow);
+
+            var pagedData = query
+                .OrderByDescending(x => x.CreateDate)
+                .Skip(pager.Skip)
+                .Take(pager.Take)
+                .Select(x => new NewsViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePaths = x.Images.Select(i => i.ImagePath).ToList()
+                })
+                .ToList();
+
             return new BaseFilterViewModel<NewsViewModel>
             {
-                EndPage = pager.EndPage,
-                Entities = outPut,
+                Entities = pagedData,
+                PageIndex = pageIndex,
                 PageCount = pager.PageCount,
                 StartPage = pager.StartPage,
-                PageIndex = pageIndex
+                EndPage = pager.EndPage
             };
+
+           
         }
 
         public NewsDetailsViewModel GetNewsDetails(int id)
@@ -91,37 +115,60 @@ namespace ServiceLayer.Services
 
         public BaseFilterViewModel<EventViewModel> GetAllEventsForUser(int pageIndex, string search)
         {
-            var newsList = _db.Events.Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
-            int take = 10;
-            int howManyPageShow = 2;
-            var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
-            if (!string.IsNullOrEmpty(search))
-            {
-                newsList = newsList.Where(x =>
-                    x.Title.Contains(search) ||
-                    x.Description.Contains(search)).ToList();
-            }
-            var result = newsList.Select(x => new EventViewModel
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Description = x.Description,
-                ImagePath = x.ImagePath,
-                RegistrationDeadline = x.RegistrationDeadline,
-                EventStartDate = x.EventStartDate,
-                EventEndDate = x.EventEndDate,
-                CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
 
-            }).ToList();
-            var outPut = PagingHelper.Pagination<EventViewModel>(result, pager);
+            var query = _db.Events.Include(x => x.Registrations).Where(x => !x.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(x => x.Title.Contains(search) ||
+                                       x.Description.Contains(search));
+            }
+
+            int totalEntities = query.Count();
+
+            if (totalEntities == 0)
+            {
+                return new BaseFilterViewModel<EventViewModel>
+                {
+                    Entities = new List<EventViewModel>(),
+                    PageIndex = 1,
+                    PageCount = 0,
+                    StartPage = 1,
+                    EndPage = 1
+                };
+            }
+
+            int take = 3;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, totalEntities, take, howManyPageShow);
+
+            var pagedData = query
+                .OrderByDescending(x => x.CreateDate)
+                .Skip(pager.Skip)
+                .Take(pager.Take)
+                .Select(x => new EventViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePath = x.ImagePath,
+                    RegistrationDeadline = x.RegistrationDeadline,
+                    EventStartDate = x.EventStartDate,
+                    EventEndDate = x.EventEndDate,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
+                })
+                .ToList();
+
             return new BaseFilterViewModel<EventViewModel>
             {
-                EndPage = pager.EndPage,
-                Entities = outPut,
+                Entities = pagedData,
+                PageIndex = pageIndex,
                 PageCount = pager.PageCount,
                 StartPage = pager.StartPage,
-                PageIndex = pageIndex
+                EndPage = pager.EndPage
             };
+
+          
         }
 
 

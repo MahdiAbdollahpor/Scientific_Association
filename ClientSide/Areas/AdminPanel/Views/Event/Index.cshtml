@@ -1,101 +1,88 @@
-﻿@using ServiceLayer.Services.Interfaces
+﻿@using ServiceLayer.PublicClasses
 @using ServiceLayer.ViewModels.AdminViewModels
 @using ServiceLayer.ViewModels.BaseViewModels
-@model BaseFilterViewModel<ListUserViewModel>
-@inject IAdminService _adminService
-
+@model BaseFilterViewModel<EventViewModel>
 @{
-    ViewData["Title"] = "مدیریت کاربران";
+    ViewData["Title"] = "مدیریت همایش‌ها";
     Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Content area -->
 <div class="flex-1 overflow-auto p-6">
-    <div class="content-area" id="users-content">
+    <div class="content-area" id="events-content">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">مدیریت کاربران</h2>
+            <h2 class="text-2xl font-bold text-gray-800">مدیریت همایش‌ها</h2>
 
-            <!-- فرم جستجو -->
-            <form method="get" asp-action="Index" asp-controller="Account" asp-area="AdminPanel" class="relative">
-                <input type="hidden" name="pageId" value="1" />
-                <input type="text"
-                       name="search"
-                       value="@(Context.Request.Query["search"])"
-                       placeholder="جستجوی کاربر..."
-                       class="pr-10 pl-4 py-2 w-64 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <i class="fas fa-search text-gray-400"></i>
+            <div class="flex space-x-3">
+                <!-- Search Box -->
+                <div class="relative">
+                    <form method="get" id="formFilter">
+                        <input hidden value="@Model.PageIndex" id="pageId" name="pageId" />
+                        <input type="text" id="event-search" placeholder="جستجوی همایش..."
+                               class="pr-10 pl-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
 
-        <!-- جدول کاربران -->
-        <div class="bg-white shadow rounded-lg overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ردیف</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام خانوادگی</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">شماره تماس</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کد ملی</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کد دانشجویی</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاریخ عضویت</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وضعیت</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="users-table-body">
-                        @if (Model.Entities != null && Model.Entities.Any())
-                        {
-                            
-                                int counter = (Model.PageIndex - 1) * 10 + 1;
-                            
-                            @foreach (var item in Model.Entities)
-                            {
-                                <tr>
-                                    <th class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" scope="row">@counter</th>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@item.firstName</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.lastName</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.PhoneNumber</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.nationalCode</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.studentNumber</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.CreateDate</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        @(item.IsDeleted ? "غیرفعال" : "فعال")
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button class="text-yellow-600 hover:text-yellow-900 ml-3 edit-user-btn"
-                                                data-user-id="@item.Id">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="printUserCard(@item.Id)"
-                                                class="text-blue-600 hover:text-blue-900">
-                                            <i class="fas fa-print"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                counter++;
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="9" class="px-6 py-12 text-center text-gray-500">
-                                    <i class="fas fa-user-slash text-gray-300 text-4xl mb-3"></i>
-                                    <p class="text-lg font-medium">هیچ کاربری یافت نشد</p>
-                                    <p class="text-sm">با تغییر فیلتر یا بازگشت به صفحه اول دوباره امتحان کنید.</p>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus ml-2"></i>
+                    افزودن همایش جدید
+                </a>
             </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="event-container">
+            @foreach (var item in Model.Entities)
+            {
+                <div class="event-card bg-white rounded-lg shadow overflow-hidden">
+                    <img src="@(item.ImagePath ?? "https://via.placeholder.com/400x300")"
+                         alt="@item.Title" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">@item.Title</h3>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">
+                                <i class="fas fa-users ml-1"></i>
+                                @item.RegisteredUsersCount نفر
+                            </span>
+                            <span class="text-sm text-gray-600">
+                                <i class="far fa-calendar-alt ml-1"></i>
+                                @MyDateTime.GetShamsiDateFromGregorian(item.EventStartDate, false)
+                                @if (item.EventEndDate.HasValue)
+                                {
+                                    <span>تا @MyDateTime.GetShamsiDateFromGregorian(item.EventEndDate.Value, false)</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="flex justify-end space-x-2 space-x-reverse">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-info-circle"></i> جزئیات
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-yellow-600 hover:text-yellow-800">
+                                <i class="fas fa-edit"></i> ویرایش
+                            </a>
+                            <button class="text-red-600 hover:text-red-800 delete-btn" data-id="@item.Id" data-type="event">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- نمایش پیام زمانی که کاربری وجود ندارد -->
+        @if (!Model.Entities.Any())
+        {
+            <div class="bg-white shadow rounded-lg overflow-hidden mt-4">
+                <div class="p-4 text-center text-gray-600">
+                    هیچ کاربری یافت نشد.
+                </div>
+            </div>
+        }
+
+
         <!-- صفحه‌بندی -->
-        @if (Model.PageCount > 0 && Model.Entities.Any())
+        @if (Model.PageCount > 1)
         {
             <div class="mt-6 flex justify-center">
                 <nav aria-label="Page navigation">
@@ -105,7 +92,7 @@
                         {
                             <li class="page-item">
                                 <a class="page-link px-3 py-2 border rounded text-gray-700 hover:bg-indigo-50"
-                                   href="@Url.Action("Index", "Account", new { area = "AdminPanel", pageId = Model.PageIndex - 1, search = Context.Request.Query["search"] })">
+                                   href="@Url.Action("Index", "Event", new { area = "AdminPanel", pageId = Model.PageIndex - 1, search = Context.Request.Query["search"] })">
                                     « قبلی
                                 </a>
                             </li>
@@ -116,7 +103,7 @@
                         {
                             <li class="page-item">
                                 <a class="page-link px-3 py-2 border rounded @(i == Model.PageIndex ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-indigo-50")"
-                                   href="@Url.Action("Index", "Account", new { area = "AdminPanel", pageId = i, search = Context.Request.Query["search"] })">
+                                   href="@Url.Action("Index", "Event", new { area = "AdminPanel", pageId = i, search = Context.Request.Query["search"] })">
                                     @i
                                 </a>
                             </li>
@@ -127,7 +114,7 @@
                         {
                             <li class="page-item">
                                 <a class="page-link px-3 py-2 border rounded text-gray-700 hover:bg-indigo-50"
-                                   href="@Url.Action("Index", "Account", new { area = "AdminPanel", pageId = Model.PageIndex + 1, search = Context.Request.Query["search"] })">
+                                   href="@Url.Action("Index", "Event", new { area = "AdminPanel", pageId = Model.PageIndex + 1, search = Context.Request.Query["search"] })">
                                     بعدی »
                                 </a>
                             </li>
@@ -136,154 +123,64 @@
                 </nav>
             </div>
         }
-        else if (Model.PageCount == 0 || (Model.Entities != null && !Model.Entities.Any()))
-        {
-            <div class="text-center py-4 text-gray-500">
-                <i class="fas fa-folder-open text-lg"></i> صفحه‌بندی موجود نیست
-            </div>
-        }
     </div>
 </div>
 
-<!-- اسکریپت‌ها -->
-<script>
-    function printUserCard(userId) {
-        const printWindow = window.open(
-            `/AdminPanel/Account/GetUserCardHtml?id=${userId}`,
-            '_blank',
-            'width=600,height=400,toolbar=0,location=0,menubar=0'
-        );
-        printWindow.onbeforeunload = function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'چاپ انجام شد',
-                text: 'کارت کاربر با موفقیت چاپ شد',
-                timer: 2000,
-                showConfirmButton: false
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // مدیریت رویداد کلیک برای حذف همایش
+            $(document).on('click', '.delete-btn[data-type="event"]', function () {
+                var eventId = $(this).data('id');
+                Swal.fire({
+                    title: 'آیا مطمئن هستید؟',
+                    text: "این عمل قابل بازگشت نیست!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'بله، حذف شود!',
+                    cancelButtonText: 'انصراف'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/AdminPanel/Event/DeleteEvent/' + eventId, function (response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'حذف شد!',
+                                    response.message,
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'خطا!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
             });
-        };
-    }
 
-    // مدیریت ویرایش کاربر
-    document.addEventListener('DOMContentLoaded', function () {
-        document.addEventListener('click', function (e) {
-            const editBtn = e.target.closest('.edit-user-btn');
-            if (editBtn) {
-                e.preventDefault();
-                const userId = editBtn.getAttribute('data-user-id');
-                showEditUserModal(userId);
-            }
+            // جستجوی همایش‌ها
+            $('#event-search').on('input', debounce(function () {
+                var searchValue = $(this).val().trim().toLowerCase();
+                $('#event-container .event-card').each(function () {
+                    var title = $(this).find('h3').text().toLowerCase();
+                    $(this).toggle(title.includes(searchValue));
+                });
+            }, 300));
         });
 
-        function showEditUserModal(userId) {
-            if (!userId || isNaN(userId)) {
-                console.error("شناسه نامعتبر است");
-                return;
-            }
-
-            fetch(`/AdminPanel/Account/EditUser/${userId}`)
-                .then(response => response.ok ? response.text() : Promise.reject("خطا در دریافت اطلاعات کاربر"))
-                .then(html => {
-                    const modalContainer = document.createElement('div');
-                    modalContainer.innerHTML = html;
-                    document.body.appendChild(modalContainer);
-                    document.getElementById('user-modal-overlay').classList.add('active');
-                    document.getElementById('user-modal').classList.add('active');
-                    setupModalEvents();
-                })
-                .catch(error => console.error('Error:', error));
+        function debounce(func, wait) {
+            let timeout;
+            return function () {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
         }
-
-        function setupModalEvents() {
-            document.querySelectorAll('.close-user-modal').forEach(btn => {
-                btn.addEventListener('click', closeModal);
-            });
-
-            const userForm = document.getElementById('user-form');
-            if (userForm) {
-                userForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    submitUserForm(this);
-                });
-            }
-        }
-
-        function closeModal() {
-            const overlay = document.getElementById('user-modal-overlay');
-            const modal = document.getElementById('user-modal');
-            if (overlay) overlay.classList.remove('active');
-            if (modal) modal.classList.remove('active');
-            setTimeout(() => {
-                overlay?.remove();
-                modal?.remove();
-            }, 300);
-        }
-
-        function submitUserForm(form) {
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال پردازش...';
-            submitBtn.disabled = true;
-
-            const formData = new FormData(form);
-
-            $.ajax({
-                url: form.action,
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (data) {
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'موفق',
-                            text: data.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        showValidationErrors(data.errors || [data.message]);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    let errorMessage = 'خطا در ارتباط با سرور';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    }
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطا',
-                        text: errorMessage
-                    });
-                },
-                complete: function () {
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.disabled = false;
-                }
-            });
-        }
-
-        function showValidationErrors(errors) {
-            let errorHtml = '<ul class="text-right">';
-            errors.forEach(error => {
-                errorHtml += `<li>${error}</li>`;
-            });
-            errorHtml += '</ul>';
-            Swal.fire({
-                icon: 'error',
-                title: 'خطا در اعتبارسنجی',
-                html: errorHtml
-            });
-        }
-    });
-</script>
-
-<!-- کتابخانه‌ها -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </script>
+}

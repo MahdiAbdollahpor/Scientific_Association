@@ -7,6 +7,7 @@ using ServiceLayer.PublicClasses;
 using ServiceLayer.Services.Interfaces;
 using ServiceLayer.ViewModels.AdminViewModels;
 using ServiceLayer.ViewModels.BaseViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ServiceLayer.Services
 {
@@ -133,33 +134,54 @@ namespace ServiceLayer.Services
             return  false;
         }
 
-        public BaseFilterViewModel<NewsViewModel> GetAllNewsForAdmin(int pageIndex, string search)
+        public BaseFilterViewModel<NewsViewModel> GetAllNewsForAdmin(int pageIndex, string search = "")
         {
-            var newsList = _db.News.Include(x => x.Images).Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
-            int take = 10;
-            int howManyPageShow = 2;
-            var pager = PagingHelper.Pager(pageIndex, newsList.Count(), take, howManyPageShow);
-            if (!string.IsNullOrEmpty(search))
+            var query = _db.News.Include(x => x.Images).Where(x => !x.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                newsList = newsList.Where(x =>
-                    x.Title.Contains(search) ||
-                    x.Description.Contains(search)).ToList();
+                query = query.Where(x => x.Title.Contains(search) ||
+                                       x.Description.Contains(search));
             }
-            var result = newsList.Select(x => new NewsViewModel
+
+            int totalEntities = query.Count();
+
+            if (totalEntities == 0)
             {
-                Id = x.Id,
-                Title = x.Title,
-                Description = x.Description,
-                ImagePaths = x.Images.Select(i => i.ImagePath).ToList() // تغییر اینجا
-            }).ToList();
-            var outPut = PagingHelper.Pagination<NewsViewModel>(result, pager);
+                return new BaseFilterViewModel<NewsViewModel>
+                {
+                    Entities = new List<NewsViewModel>(),
+                    PageIndex = 1,
+                    PageCount = 0,
+                    StartPage = 1,
+                    EndPage = 1
+                };
+            }
+
+            int take = 6;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, totalEntities, take, howManyPageShow);
+
+            var pagedData = query
+                .OrderByDescending(x => x.CreateDate)
+                .Skip(pager.Skip)
+                .Take(pager.Take)
+                .Select(x => new NewsViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePaths = x.Images.Select(i => i.ImagePath).ToList()
+                })
+                .ToList();
+
             return new BaseFilterViewModel<NewsViewModel>
             {
-                EndPage = pager.EndPage,
-                Entities = outPut,
+                Entities = pagedData,
+                PageIndex = pageIndex,
                 PageCount = pager.PageCount,
                 StartPage = pager.StartPage,
-                PageIndex = pageIndex
+                EndPage = pager.EndPage
             };
         }
 
@@ -342,42 +364,59 @@ namespace ServiceLayer.Services
 
 
         // evant service
-        public BaseFilterViewModel<EventViewModel> GetAllEventsForAdmin(int pageIndex, string search)
+        public BaseFilterViewModel<EventViewModel> GetAllEventsForAdmin(int pageIndex, string search = "")
         {
-            var eventList = _db.Events.Include(x => x.Registrations).Where(x => !x.IsDeleted).OrderByDescending(x => x.CreateDate).ToList();
-            int take = 10;
-            int howManyPageShow = 2;
-            var pager = PagingHelper.Pager(pageIndex, eventList.Count(), take, howManyPageShow);
+            var query = _db.Events.Include(x => x.Registrations).Where(x => !x.IsDeleted);
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                eventList = eventList.Where(x =>
-                    x.Title.Contains(search) ||
-                    x.Description.Contains(search)).ToList();
+                query = query.Where(x => x.Title.Contains(search) ||
+                                       x.Description.Contains(search));
             }
 
-            var result = eventList.Select(x => new EventViewModel
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Description = x.Description,
-                ImagePath = x.ImagePath,
-                RegistrationDeadline = x.RegistrationDeadline,
-                EventStartDate = x.EventStartDate,
-                EventEndDate = x.EventEndDate,
-                RegisteredUsersCount = x.Registrations.Count,
-                CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
-            }).ToList();
+            int totalEntities = query.Count();
 
-            var outPut = PagingHelper.Pagination<EventViewModel>(result, pager);
+            if (totalEntities == 0)
+            {
+                return new BaseFilterViewModel<EventViewModel>
+                {
+                    Entities = new List<EventViewModel>(),
+                    PageIndex = 1,
+                    PageCount = 0,
+                    StartPage = 1,
+                    EndPage = 1
+                };
+            }
+
+            int take = 3;
+            int howManyPageShow = 2;
+            var pager = PagingHelper.Pager(pageIndex, totalEntities, take, howManyPageShow);
+
+            var pagedData = query
+                .OrderByDescending(x => x.CreateDate)
+                .Skip(pager.Skip)
+                .Take(pager.Take)
+                .Select(x => new EventViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ImagePath = x.ImagePath,
+                    RegistrationDeadline = x.RegistrationDeadline,
+                    EventStartDate = x.EventStartDate,
+                    EventEndDate = x.EventEndDate,
+                    RegisteredUsersCount = x.Registrations.Count,
+                    CreateDate = MyDateTime.GetShamsiDateFromGregorian(x.CreateDate, false)
+                })
+                .ToList();
 
             return new BaseFilterViewModel<EventViewModel>
             {
-                EndPage = pager.EndPage,
-                Entities = outPut,
+                Entities = pagedData,
+                PageIndex = pageIndex,
                 PageCount = pager.PageCount,
                 StartPage = pager.StartPage,
-                PageIndex = pageIndex
+                EndPage = pager.EndPage
             };
         }
 
@@ -533,36 +572,51 @@ namespace ServiceLayer.Services
 
         public BaseFilterViewModel<EventRegistrationViewModel> GetEventRegistrations(int eventId, int pageIndex)
         {
-            var registrations = _db.EventRegistrations
+            var query = _db.EventRegistrations
                 .Include(x => x.User)
-                .Where(x => x.EventId == eventId)
-                .OrderByDescending(x => x.RegistrationDate)
-                .ToList();
+                .Where(x => x.EventId == eventId);
+
+            int totalEntities = query.Count();
+
+            if (totalEntities == 0)
+            {
+                return new BaseFilterViewModel<EventRegistrationViewModel>
+                {
+                    Entities = new List<EventRegistrationViewModel>(),
+                    PageIndex = 1,
+                    PageCount = 0,
+                    StartPage = 1,
+                    EndPage = 1
+                };
+            }
 
             int take = 10;
             int howManyPageShow = 2;
-            var pager = PagingHelper.Pager(pageIndex, registrations.Count(), take, howManyPageShow);
+            var pager = PagingHelper.Pager(pageIndex, totalEntities, take, howManyPageShow);
 
-            var result = registrations.Select(r => new EventRegistrationViewModel
-            {
-                RegistrationId = r.Id,
-                UserId = r.User.UserId,
-                UserFullName = r.User.firstName + " " + r.User.lastName,
-                UserPhoneNumber = r.User.PhoneNumber,
-                UserStudentNumber = r.User.studentNumber,
-                RegistrationDate = MyDateTime.GetShamsiDateFromGregorian(r.RegistrationDate, true),
-                IsApproved = r.IsApproved
-            }).ToList();
-
-            var outPut = PagingHelper.Pagination<EventRegistrationViewModel>(result, pager);
+            var pagedData = query
+                .OrderByDescending(x => x.RegistrationDate)
+                .Skip(pager.Skip)
+                .Take(pager.Take)
+                .Select(r => new EventRegistrationViewModel
+                {
+                    RegistrationId = r.Id,
+                    UserId = r.User.UserId,
+                    UserFullName = r.User.firstName + " " + r.User.lastName,
+                    UserPhoneNumber = r.User.PhoneNumber,
+                    UserStudentNumber = r.User.studentNumber,
+                    RegistrationDate = MyDateTime.GetShamsiDateFromGregorian(r.RegistrationDate, true),
+                    IsApproved = r.IsApproved
+                })
+                .ToList();
 
             return new BaseFilterViewModel<EventRegistrationViewModel>
             {
-                EndPage = pager.EndPage,
-                Entities = outPut,
+                Entities = pagedData,
+                PageIndex = pageIndex,
                 PageCount = pager.PageCount,
                 StartPage = pager.StartPage,
-                PageIndex = pageIndex
+                EndPage = pager.EndPage
             };
         }
 
